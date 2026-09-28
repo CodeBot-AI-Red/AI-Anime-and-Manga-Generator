@@ -61,6 +61,32 @@ print(len(split.train), len(split.validation))
 
 `DatasetValidator` continua examinando os demais arquivos e devolve uma lista de erros para imagens inválidas, imagens sem metadados e anotações inválidas. `split_dataset` usa uma ordenação por hash estável e uma semente explícita, portanto a mesma coleção de arquivos e a mesma semente produzem a mesma divisão. A fração de validação deve estar entre `0` (inclusive) e `1` (exclusivo).
 
-## Próximos passos
+## Pré-processamento para o treinamento futuro
 
-Quando o pipeline de treinamento existir, ele deverá consumir somente `DatasetSample` validados e a divisão produzida por `split_dataset`. Esta camada não redimensiona, transforma, baixa, nem treina imagens: essas decisões ficam deliberadamente para módulos futuros.
+Após a validação, use `DatasetPreprocessor` para preparar os exemplos. A configuração padrão é pequena (`32x32` e lote de `2`) para testes locais e pode ser ajustada sem alterar o dataset:
+
+```python
+from src.data import DatasetPreprocessor, PreprocessingConfig
+
+preprocessor = DatasetPreprocessor(
+    PreprocessingConfig(resolution=(64, 64), batch_size=4)
+)
+prepared = preprocessor.process(split.train[0])
+batch = preprocessor.process_batch(split.train[:4])
+```
+
+O pré-processador atual decodifica PNGs RGB/RGBA de 8 bits não entrelaçados, redimensiona por vizinho mais próximo e normaliza cada componente de pixel de `0..255` para `0.0..1.0`. A imagem individual resulta em um `Tensor` no formato `(C, H, W)`; um lote resulta em `(N, C, H, W)`. Os metadados `ImageMetadata` são preservados, alinhados à imagem processada e não são modificados.
+
+Arquivos corrompidos, PNGs com uma codificação não compatível, amostras sem imagem ou metadados, dimensões divergentes e lotes vazios ou acima de `batch_size` geram `PreprocessingError`. Outros formatos ainda podem ser validados na etapa anterior, mas somente PNG é decodificado neste estágio inicial sem dependências externas.
+
+## Fluxo atual e próximos passos
+
+```text
+Dataset local
+    → Validação (DatasetValidator)
+    → Pré-processamento (DatasetPreprocessor)
+    → Tensor normalizado (C, H, W) ou (N, C, H, W)
+    → Futuro treinamento
+```
+
+O projeto continua sem treinar modelos, baixar dados ou usar APIs externas. Quando o sistema de treinamento existir, ele deverá consumir somente `DatasetSample` validados e os tensores preparados por esta etapa.
