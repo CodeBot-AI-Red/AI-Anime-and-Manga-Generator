@@ -1,0 +1,7 @@
+image_channels: 3
+base_channels: 8
+latent_channels: 16
+text_embedding_dim: 12
+downsample_factor: 2
+image_resolution: [32, 32]
+generation_steps: 4

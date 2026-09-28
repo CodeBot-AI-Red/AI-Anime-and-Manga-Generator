@@ -13,6 +13,8 @@ class ModelConfig:
     text_embedding_dim: int = 12
     scene_embedding_dim: int = 12
     downsample_factor: int = 2
+    generation_steps: int = 4
+    image_resolution: tuple[int, int] = (32, 32)
 
     def __post_init__(self) -> None:
         values = {
@@ -22,7 +24,12 @@ class ModelConfig:
             "text_embedding_dim": self.text_embedding_dim,
             "scene_embedding_dim": self.scene_embedding_dim,
             "downsample_factor": self.downsample_factor,
+            "generation_steps": self.generation_steps,
         }
         invalid = [name for name, value in values.items() if value <= 0]
         if invalid:
             raise ValueError(f"Valores de configuração devem ser positivos: {', '.join(invalid)}")
+        if len(self.image_resolution) != 2 or any(dimension <= 0 for dimension in self.image_resolution):
+            raise ValueError("image_resolution deve conter largura e altura positivas.")
+        if any(dimension % self.downsample_factor for dimension in self.image_resolution):
+            raise ValueError("image_resolution deve ser divisível por downsample_factor.")

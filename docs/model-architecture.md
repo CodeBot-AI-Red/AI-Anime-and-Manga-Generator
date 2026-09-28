@@ -1,48 +1,46 @@
-# Arquitetura do núcleo de modelos
+# Arquitetura do primeiro modelo generativo experimental
 
-## Estado atual
+## Fluxo de geração
 
-Esta é a primeira versão do núcleo da IA. Ela é deliberadamente pequena e não
-gera imagens, não baixa modelos e não treina parâmetros. O objetivo é fixar
-interfaces simples para que as próximas etapas possam evoluir sem reorganizar o
-projeto.
+O primeiro modelo generativo local implementa o fluxo `Prompt -> Text
+Conditioning -> Representação latente -> Modelo generativo -> Geração
+iterativa -> Imagem`. Ele é pequeno, determinístico e usa apenas Python puro:
+serve para validar interfaces e execução local, não para qualidade visual
+profissional.
 
-O núcleo recebe um lote de imagens no formato `(lote, canais, altura, largura)`,
-uma lista de prompts e uma lista de descrições de cena. Todos precisam ter o
-mesmo tamanho de lote. O resultado contém três tensores: latentes visuais,
-embeddings de texto e embeddings de cena.
+1. `TextConditioner` transforma cada prompt em um embedding com dimensão
+   configurável. A interface aceita lotes e permanece isolada para a futura
+   troca por tokenizer e encoder de texto treinável.
+2. `LatentRepresentation` reduz imagens BCHW por blocos espaciais e repete os
+   valores no decoder. Ela define o contrato encoder/decoder entre dataset,
+   treinamento e geração.
+3. `SmallGenerativeModel` recebe o mapa latente, embedding textual e índice da
+   etapa. O embedding seleciona uma correção por canal e a etapa controla sua
+   intensidade.
+4. `IterativeImageGenerator` cria um latente inicial determinístico do prompt,
+   aplica a correção por `generation_steps` e decodifica o latente para uma
+   imagem normalizada `(1, C, H, W)`.
 
-## Partes existentes
+## Treinamento e configurações
 
-- `config.py`: define `ModelConfig`, com dimensões pequenas e validação de
-  valores positivos.
-- `tensors.py`: oferece um tensor mínimo em Python puro. Ele valida forma e
-  quantidade de valores e evita exigir uma biblioteca de ML nesta fase.
-- `image_network.py`: contém `ImageEncoder`. Hoje ele valida imagens BCHW e
-  cria um mapa latente com resolução reduzida; futuramente será uma rede
-  convolucional ou um encoder visual treinável.
-- `text_conditioning.py`: contém `TextConditioner`, interface isolada para
-  prompts. Seu embedding determinístico atual é apenas um placeholder para um
-  tokenizer e encoder de texto.
-- `scene.py`: contém `SceneDescription` e `SceneConditioner`. Os campos de
-  personagem, pose, câmera, cenário e estilo já formam o contrato para os
-  controles criativos futuros.
-- `core.py`: contém `AnimeMangaCore`, que cria os módulos, valida o lote e
-  entrega as três representações.
+`GenerativeTrainingModel` usa o `ProcessedDataLoader` e o `Trainer` já
+existentes. Ele codifica imagens pré-processadas, aplica uma etapa condicionada
+por suas captions e decodifica a saída; portanto não cria dataset ou loop de
+treinamento paralelo. O pequeno `scale` e `bias` treináveis apenas validam o
+contrato de otimização nesta etapa.
 
-## Próximas etapas
+`ModelConfig` e `configs/model.yaml` expõem `image_resolution`,
+`latent_channels`, `downsample_factor` e `generation_steps`. Os valores são
+deliberadamente modestos e não há download de pesos, APIs externas ou arquivos
+de pesos versionados.
 
-O treinamento entrará atrás de `ImageEncoder`, `TextConditioner` e
-`SceneConditioner`: os tensores leves poderão ser substituídos por tensores de
-um framework de ML, e os componentes receberão pesos, perdas, dataloaders e um
-loop de otimização no pacote `src/training/`.
+## Evolução profissional
 
-O gerador final de imagens entrará depois de `AnimeMangaCore`, consumindo os
-latentes e condicionamentos. Um decoder ou modelo de difusão poderá produzir a
-imagem de anime ou mangá, enquanto os campos de `SceneDescription` poderão
-controlar personagem, pose, enquadramento, cenário e estilo.
-
-Para crescer, aumente `ModelConfig`, troque os placeholders por camadas
-treináveis e adicione módulos especializados sem mudar a API principal. Isso
-permite experimentar encoders maiores, atenção multimodal, controles de pose e
-consistência de personagem de forma incremental.
+No futuro, o condicionador determinístico será substituído por tokenizer,
+encoder textual e atenção cross-modal. A representação latente poderá se tornar
+um VAE treinável; o modelo pequeno, uma U-Net ou transformer de difusão com
+predição de ruído; e a atualização simples, um scheduler de difusão. Controles
+de personagem, pose, enquadramento e estilo da estrutura de cena poderão entrar
+como condicionamentos adicionais. Essas trocas preservam as APIs de latente,
+condicionamento e geração iterativa, permitindo crescer para um modelo
+especializado de anime e mangá sem reescrever a organização do projeto.
