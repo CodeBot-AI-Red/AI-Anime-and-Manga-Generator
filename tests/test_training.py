@@ -4,7 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from src.training import ProcessedDataLoader, Trainer, TrainingConfig, mean_squared_error
+from src.training import GenerativeTrainingModel, ProcessedDataLoader, Trainer, TrainingConfig, mean_squared_error
 from src.training.checkpoints import load_checkpoint
 from src.training.mock import synthetic_samples
 from src.models import Tensor
@@ -43,6 +43,12 @@ class TrainingTests(unittest.TestCase):
         resumed.resume(checkpoint_path)
         self.assertEqual(resumed.current_epoch, 2)
         self.assertEqual(resumed.model.state_dict(), trainer.model.state_dict())
+
+    def test_generative_model_integrates_with_existing_trainer(self) -> None:
+        trainer = Trainer(self.config, GenerativeTrainingModel())
+        loss = trainer.train_step(next(self.loader.batches()))
+        self.assertGreater(loss, 0)
+        self.assertNotEqual(trainer.model.scale, 0.5)
 
 
 if __name__ == "__main__":

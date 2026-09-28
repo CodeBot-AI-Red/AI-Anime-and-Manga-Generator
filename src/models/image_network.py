@@ -1,17 +1,14 @@
-"""Codificador visual inicial, sem pesos treináveis nesta etapa."""
+"""Adaptador do codificador visual para a representação latente experimental."""
 
 from __future__ import annotations
 
 from .config import ModelConfig
+from .latent import LatentRepresentation
 from .tensors import Tensor
 
 
 class ImageEncoder:
-    """Converte uma imagem BCHW em um mapa latente de resolução reduzida.
-
-    A saída ainda é preenchida com zeros: ela define o contrato de dados que
-    uma futura rede convolucional/transformer treinável deverá preservar.
-    """
+    """Converte uma imagem BCHW em um mapa latente de resolução reduzida."""
 
     def __init__(self, config: ModelConfig) -> None:
         self.config = config
@@ -25,4 +22,4 @@ class ImageEncoder:
         factor = self.config.downsample_factor
         if height % factor or width % factor:
             raise ValueError("Altura e largura devem ser divisíveis pelo fator de redução.")
-        return Tensor.zeros((batch, self.config.latent_channels, height // factor, width // factor))
+        return LatentRepresentation(self.config).encode(images)

@@ -2,7 +2,18 @@
 
 import unittest
 
-from src.models import AnimeMangaCore, ImageEncoder, ModelConfig, SceneConditioner, SceneDescription, Tensor, TextConditioner
+from src.models import (
+    AnimeMangaCore,
+    ImageEncoder,
+    IterativeImageGenerator,
+    LatentRepresentation,
+    ModelConfig,
+    SceneConditioner,
+    SceneDescription,
+    SmallGenerativeModel,
+    Tensor,
+    TextConditioner,
+)
 
 
 class ModelModuleTests(unittest.TestCase):
@@ -38,6 +49,28 @@ class ModelModuleTests(unittest.TestCase):
                 prompts=["somente um prompt"],
                 scenes=[SceneDescription(), SceneDescription()],
             )
+
+    def test_latent_representation_preserves_expected_dimensions(self) -> None:
+        representation = LatentRepresentation(self.config)
+        latent = representation.encode(Tensor.zeros((2, 3, 8, 8)))
+        decoded = representation.decode(latent)
+        self.assertEqual(latent.shape, (2, 16, 4, 4))
+        self.assertEqual(decoded.shape, (2, 3, 8, 8))
+
+    def test_generative_model_forward_uses_text_and_step(self) -> None:
+        latents = Tensor.zeros((2, 16, 4, 4))
+        text = TextConditioner(self.config).encode(["heroína", "robô"])
+        output = SmallGenerativeModel(self.config).forward(latents, text, generation_step=1)
+        self.assertEqual(output.shape, latents.shape)
+        self.assertNotEqual(output.values, latents.values)
+
+    def test_iterative_generation_produces_an_image_from_prompt(self) -> None:
+        generator = IterativeImageGenerator(ModelConfig(image_resolution=(8, 6), generation_steps=3))
+        latents = generator.generate_latents(["garota anime sorrindo"])
+        image = generator.generate("garota anime sorrindo")
+        self.assertEqual(latents.shape, (1, 16, 3, 4))
+        self.assertEqual(image.shape, (1, 3, 6, 8))
+        self.assertTrue(all(0.0 <= value <= 1.0 for value in image.values))
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Protocol
 
 from .checkpoints import load_checkpoint, save_checkpoint
 from .config import TrainingConfig
@@ -12,8 +13,20 @@ from .metrics import MetricHistory, mean_absolute_error
 from .model import SmallReconstructionModel
 
 
+class TrainableModel(Protocol):
+    """Contrato mínimo compartilhado pelos modelos treináveis locais."""
+
+    scale: float
+    bias: float
+
+    def forward(self, inputs: object, metadata: tuple[object, ...]) -> object: ...
+    def backward(self, inputs: object, targets: object) -> dict[str, float]: ...
+    def state_dict(self) -> dict[str, float]: ...
+    def load_state_dict(self, state: dict[str, float]) -> None: ...
+
+
 class Trainer:
-    def __init__(self, config: TrainingConfig, model: SmallReconstructionModel | None = None) -> None:
+    def __init__(self, config: TrainingConfig, model: TrainableModel | None = None) -> None:
         self.config, self.model = config, model or SmallReconstructionModel()
         self.optimizer_state = {"learning_rate": config.learning_rate}
         self.current_epoch = 0
