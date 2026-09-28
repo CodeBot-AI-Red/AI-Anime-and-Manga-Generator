@@ -1,0 +1,7 @@
+epochs: 2
+learning_rate: 0.01
+batch_size: 2
+checkpoint_dir: checkpoints
+save_every: 1
+device: auto
+seed: 42
