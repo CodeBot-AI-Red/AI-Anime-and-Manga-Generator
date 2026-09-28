@@ -1,7 +1,7 @@
 epochs: 2
-learning_rate: 0.01
+learning_rate: 0.001
 batch_size: 2
 checkpoint_dir: checkpoints
 save_every: 1
-device: auto
+device: cpu
 seed: 42

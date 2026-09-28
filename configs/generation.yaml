@@ -1,4 +1,9 @@
 image_resolution: [32, 32]
 latent_channels: 16
 generation_steps: 4
+num_timesteps: 100
+sampling_steps: 8
+base_channels: 8
+text_embedding_dim: 32
+seed: 42
 prompt: "guerreira anime em uma cidade ao entardecer"
