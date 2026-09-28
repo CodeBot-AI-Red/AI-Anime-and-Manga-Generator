@@ -1,0 +1,2 @@
+# Autograd backend for the from-scratch diffusion architecture. No pretrained weights are used.
+torch>=2.2

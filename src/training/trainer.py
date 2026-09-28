@@ -33,6 +33,8 @@ class Trainer:
         self.history = MetricHistory()
 
     def train_step(self, batch: TrainingBatch) -> float:
+        if getattr(self.model, "is_diffusion_model", False):
+            return self.model.train_step(batch)
         predictions = self.model.forward(batch.inputs, batch.metadata)
         loss = mean_squared_error(predictions, batch.targets)
         gradients = self.model.backward(batch.inputs, batch.targets)
@@ -41,6 +43,10 @@ class Trainer:
         return loss
 
     def validate(self, loader: ProcessedDataLoader) -> dict[str, float]:
+        if getattr(self.model, "is_diffusion_model", False):
+            losses = [self.model.validate_batch(batch) for batch in loader.batches()]
+            loss = sum(losses) / len(losses)
+            return {"loss": loss, "mae": loss}
         losses, maes = [], []
         for batch in loader.batches():
             predictions = self.model.forward(batch.inputs, batch.metadata)
@@ -61,11 +67,17 @@ class Trainer:
         return self.history
 
     def save_checkpoint(self, path: Path | None = None) -> Path:
+        if getattr(self.model, "is_diffusion_model", False):
+            target = path or self.config.checkpoint_dir / f"epoch-{self.current_epoch}.pt"
+            return self.model.save_checkpoint(target, self.current_epoch, {"train_loss": self.history.train_loss[-1] if self.history.train_loss else 0.0})
         target = path or self.config.checkpoint_dir / f"epoch-{self.current_epoch}.json"
         metrics = {"train_loss": self.history.train_loss[-1] if self.history.train_loss else 0.0}
         return save_checkpoint(target, self.current_epoch, self.model.state_dict(), self.optimizer_state, metrics)
 
     def resume(self, path: Path) -> None:
+        if getattr(self.model, "is_diffusion_model", False):
+            self.current_epoch = self.model.load_checkpoint(path)
+            return
         checkpoint = load_checkpoint(path)
         self.model.load_state_dict(checkpoint["model"])
         self.optimizer_state = checkpoint["optimizer"]

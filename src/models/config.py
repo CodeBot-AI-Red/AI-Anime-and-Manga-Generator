@@ -14,6 +14,9 @@ class ModelConfig:
     scene_embedding_dim: int = 12
     downsample_factor: int = 2
     generation_steps: int = 4
+    num_timesteps: int = 100
+    time_embedding_dim: int = 32
+    text_vocab_size: int = 256
     image_resolution: tuple[int, int] = (32, 32)
 
     def __post_init__(self) -> None:
@@ -25,6 +28,9 @@ class ModelConfig:
             "scene_embedding_dim": self.scene_embedding_dim,
             "downsample_factor": self.downsample_factor,
             "generation_steps": self.generation_steps,
+            "num_timesteps": self.num_timesteps,
+            "time_embedding_dim": self.time_embedding_dim,
+            "text_vocab_size": self.text_vocab_size,
         }
         invalid = [name for name, value in values.items() if value <= 0]
         if invalid:
