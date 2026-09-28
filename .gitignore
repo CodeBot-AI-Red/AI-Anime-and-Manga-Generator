@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment files
+.env
+.env.*
+
+# Generated data and model artifacts
+data/raw/*
+data/processed/*
+data/datasets/*
+data/annotations/*
+models/base/*
+models/checkpoints/*
+models/adapters/*
+checkpoints/*
+
+# Keep the project directory structure
+!data/**/.gitkeep
+!models/**/.gitkeep
+!checkpoints/.gitkeep
