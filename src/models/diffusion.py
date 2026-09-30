@@ -58,7 +58,12 @@ class PromptEncoder(nn.Module):
 
     def forward(self, prompts: list[str], device: torch.device) -> torch.Tensor:
         tokens = self.tokenize(prompts, device)
-        return self.embedding(tokens).mean(dim=1)
+        # Padding must not influence a caption embedding.  This matters for
+        # mixed batches, where short prompts otherwise receive a large number
+        # of learned ``0`` token embeddings.
+        mask = (tokens != 0).unsqueeze(-1)
+        lengths = mask.sum(dim=1).clamp_min(1)
+        return (self.embedding(tokens) * mask).sum(dim=1) / lengths
 
 
 class ResidualBlock(nn.Module):
@@ -99,12 +104,22 @@ class DiffusionDenoiser(nn.Module):
         self.up_block = ResidualBlock(channels * 2, channels, condition_dim)
         self.output = nn.Conv2d(channels, config.image_channels, 3, padding=1)
 
-    def forward(self, noisy_images: torch.Tensor, timesteps: torch.Tensor, prompts: list[str]) -> torch.Tensor:
+    def forward(
+        self,
+        noisy_images: torch.Tensor,
+        timesteps: torch.Tensor,
+        prompts: list[str],
+        *,
+        drop_conditioning: bool = False,
+    ) -> torch.Tensor:
         if noisy_images.ndim != 4 or noisy_images.shape[1] != self.config.image_channels:
             raise ValueError("Imagens devem ter a forma (lote, image_channels, altura, largura).")
         if noisy_images.shape[0] != len(prompts) or timesteps.shape != (noisy_images.shape[0],):
             raise ValueError("Imagem, timestep e prompt devem ter o mesmo tamanho de lote.")
-        condition = self.condition(torch.cat((self.time_embedding(timesteps), self.prompt_encoder(prompts, noisy_images.device)), dim=1))
+        prompt_embedding = self.prompt_encoder(prompts, noisy_images.device)
+        if drop_conditioning:
+            prompt_embedding = torch.zeros_like(prompt_embedding)
+        condition = self.condition(torch.cat((self.time_embedding(timesteps), prompt_embedding), dim=1))
         skip = self.down_block(self.input(noisy_images), condition)
         hidden = self.middle(self.downsample(skip), condition)
         upsampled = self.upsample(hidden)

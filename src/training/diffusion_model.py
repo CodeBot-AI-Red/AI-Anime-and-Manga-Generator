@@ -38,7 +38,13 @@ class DiffusionTrainingModel:
         images = self._images(batch)
         timesteps = torch.randint(0, self.config.num_timesteps, (images.shape[0],), device=self.device)
         noise = torch.randn_like(images)
-        prediction = self.denoiser(self.scheduler.add_noise(images, noise, timesteps), timesteps, self.prompts(getattr(batch, "metadata")))
+        # Classifier-free guidance teaches the same network an unconditional
+        # path without requiring a second model or external text encoder.
+        drop_conditioning = self.denoiser.training and torch.rand((), device=self.device).item() < self.config.condition_dropout
+        prediction = self.denoiser(
+            self.scheduler.add_noise(images, noise, timesteps), timesteps,
+            self.prompts(getattr(batch, "metadata")), drop_conditioning=drop_conditioning,
+        )
         return functional.mse_loss(prediction, noise)
 
     def train_step(self, batch: object) -> float:
@@ -55,15 +61,27 @@ class DiffusionTrainingModel:
         return float(self.loss_for_batch(batch).cpu())
 
     @torch.no_grad()
-    def sample(self, prompts: list[str], sampling_steps: int | None = None) -> torch.Tensor:
+    def sample(self, prompts: list[str], sampling_steps: int | None = None, guidance_scale: float | None = None) -> torch.Tensor:
+        if not prompts:
+            raise ValueError("Forneça ao menos um prompt para gerar imagens.")
         self.denoiser.eval()
         steps = min(sampling_steps or self.config.generation_steps, self.config.num_timesteps)
         indices = torch.linspace(self.config.num_timesteps - 1, 0, steps, device=self.device).long().unique_consecutive()
         height, width = self.config.image_resolution[1], self.config.image_resolution[0]
         sample = torch.randn((len(prompts), self.config.image_channels, height, width), device=self.device)
-        for timestep in indices:
+        scale = self.config.guidance_scale if guidance_scale is None else guidance_scale
+        if scale < 0:
+            raise ValueError("guidance_scale não pode ser negativo.")
+        for position, timestep in enumerate(indices):
             times = torch.full((len(prompts),), int(timestep), device=self.device, dtype=torch.long)
-            sample = self.scheduler.step(self.denoiser(sample, times, prompts), int(timestep), sample)
+            conditional_noise = self.denoiser(sample, times, prompts)
+            if scale:
+                unconditional_noise = self.denoiser(sample, times, prompts, drop_conditioning=True)
+                predicted_noise = unconditional_noise + scale * (conditional_noise - unconditional_noise)
+            else:
+                predicted_noise = conditional_noise
+            previous = int(indices[position + 1]) if position + 1 < len(indices) else -1
+            sample = self.scheduler.step(predicted_noise, int(timestep), sample, previous_timestep=previous)
         return ((sample.clamp(-1, 1) + 1) / 2).cpu()
 
     def save_checkpoint(self, path: Path, epoch: int, metrics: dict[str, float]) -> Path:
