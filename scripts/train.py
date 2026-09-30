@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.data import DatasetPreprocessor, DatasetValidator, PreprocessingConfig, split_dataset
 from src.models.config import ModelConfig
+from src.models.diffusion import count_trainable_parameters
 from src.training import DiffusionTrainingModel, ProcessedDataLoader, Trainer, TrainingConfig
 
 
@@ -34,6 +35,7 @@ def main() -> None:
     validation_samples = [processor.process(sample) for sample in validation_source]
     config = TrainingConfig(epochs=args.epochs, batch_size=args.batch_size, checkpoint_dir=args.checkpoint_dir, learning_rate=0.001, device="cpu")
     model = DiffusionTrainingModel(ModelConfig(image_resolution=(args.resolution, args.resolution)), config.learning_rate, config.resolved_device, config.seed)
+    print(f"Parâmetros treináveis do denoiser: {count_trainable_parameters(model.denoiser):,}")
     trainer = Trainer(config, model)
     history = trainer.fit(ProcessedDataLoader(train_samples, args.batch_size, config.seed), ProcessedDataLoader(validation_samples, args.batch_size, config.seed))
     print(f"Treinamento concluído em {trainer.current_epoch} épocas; loss final: {history.train_loss[-1]:.6f}")

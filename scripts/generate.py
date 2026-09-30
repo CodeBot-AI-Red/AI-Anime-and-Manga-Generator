@@ -19,7 +19,8 @@ def save_png(image: torch.Tensor, path: Path) -> None:
     import struct
     import zlib
 
-    pixels = image.mul(255).round().byte().permute(1, 2, 0).contiguous().numpy().tobytes()
+    # ``tolist`` avoids a NumPy runtime dependency while retaining local PNG output.
+    pixels = bytes(image.mul(255).round().byte().permute(1, 2, 0).contiguous().flatten().tolist())
     height, width = image.shape[1:]
     raw = b"".join(b"\x00" + pixels[row * width * 3:(row + 1) * width * 3] for row in range(height))
     def chunk(kind: bytes, content: bytes) -> bytes:

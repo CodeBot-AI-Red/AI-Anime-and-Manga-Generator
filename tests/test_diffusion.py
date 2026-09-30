@@ -13,10 +13,11 @@ class DiffusionTests(unittest.TestCase):
     def setUp(self) -> None:
         import torch
         from src.models.config import ModelConfig
-        from src.models.diffusion import DiffusionDenoiser, TimestepEmbedding
+        from src.models.diffusion import DiffusionDenoiser, TimestepEmbedding, count_trainable_parameters
         from src.models.scheduler import NoiseScheduler
         self.torch, self.config = torch, ModelConfig(image_resolution=(32, 32), base_channels=8, time_embedding_dim=16, num_timesteps=10, generation_steps=3)
         self.model, self.embedding, self.scheduler = DiffusionDenoiser(self.config), TimestepEmbedding(16), NoiseScheduler(10)
+        self.count_trainable_parameters = count_trainable_parameters
 
     def test_embedding_scheduler_and_forward_shapes(self) -> None:
         images, times = self.torch.randn(2, 3, 32, 32), self.torch.tensor([0, 9])
@@ -26,6 +27,16 @@ class DiffusionTests(unittest.TestCase):
         self.assertEqual(noisy.shape, images.shape)
         self.assertFalse(self.torch.equal(noisy, images))
         self.assertEqual(self.model(noisy, times, ["anime boy", "manga city"]).shape, images.shape)
+        self.assertEqual(self.count_trainable_parameters(self.model), sum(parameter.numel() for parameter in self.model.parameters() if parameter.requires_grad))
+
+    def test_text_order_and_per_sample_conditioning_affect_predictions(self) -> None:
+        images, times = self.torch.randn(2, 3, 32, 32), self.torch.tensor([4, 4])
+        self.model.eval()
+        normal = self.model(images, times, ["red-haired heroine", "robot city"])
+        reversed_prompts = self.model(images, times, ["robot city", "red-haired heroine"])
+        partially_unconditioned = self.model(images, times, ["red-haired heroine", "robot city"], conditioning_mask=self.torch.tensor([1.0, 0.0]))
+        self.assertFalse(self.torch.equal(normal, reversed_prompts))
+        self.assertFalse(self.torch.equal(normal[1], partially_unconditioned[1]))
 
     def test_scheduler_supports_skipped_steps_and_guidance_sampling(self) -> None:
         from src.training.diffusion_model import DiffusionTrainingModel

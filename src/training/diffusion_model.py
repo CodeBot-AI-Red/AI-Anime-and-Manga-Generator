@@ -40,10 +40,12 @@ class DiffusionTrainingModel:
         noise = torch.randn_like(images)
         # Classifier-free guidance teaches the same network an unconditional
         # path without requiring a second model or external text encoder.
-        drop_conditioning = self.denoiser.training and torch.rand((), device=self.device).item() < self.config.condition_dropout
+        # Drop captions independently, rather than discarding a whole batch.
+        # This provides conditional and unconditional examples in every mixed batch.
+        conditioning_mask = (torch.rand(images.shape[0], device=self.device) >= self.config.condition_dropout).to(images.dtype)
         prediction = self.denoiser(
             self.scheduler.add_noise(images, noise, timesteps), timesteps,
-            self.prompts(getattr(batch, "metadata")), drop_conditioning=drop_conditioning,
+            self.prompts(getattr(batch, "metadata")), conditioning_mask=conditioning_mask,
         )
         return functional.mse_loss(prediction, noise)
 
