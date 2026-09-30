@@ -1,46 +1,23 @@
-# Arquitetura de difusão treinável (Etapa 7)
+# Arquitetura de difusão treinável
 
 ## Fluxo de geração
 
-O protótipo iterativo anterior permanece para compatibilidade, mas o caminho
-novo e treinável é `imagem limpa -> ruído/timestep -> U-Net condicional ->
-ruído previsto`. Ele usa PyTorch somente como backend local de autograd e
-inicializa todos os pesos do zero: não carrega pesos, modelos ou APIs externos.
+O caminho treinável é `imagem limpa -> ruído/timestep -> U-Net condicional -> ruído previsto`. Ele usa PyTorch somente como backend local de autograd e inicializa todos os pesos do zero: não carrega pesos, modelos, datasets ou APIs externas.
 
-`DiffusionDenoiser` trabalha diretamente em imagem BCHW e contém convolução de
-entrada, bloco residual, downsample, bloco central, upsample, conexão de skip e
-saída com os mesmos canais espaciais da entrada. `ModelConfig.image_resolution`
-aceita 32×32 por padrão e o mesmo encoder pode operar em 64×64 ou 128×128,
-desde que a dimensão seja divisível por dois.
+`DiffusionDenoiser` trabalha diretamente em imagem BCHW e usa uma U-Net de dois níveis: blocos residuais FiLM em cada resolução, duas reduções espaciais, conexões de *skip* e blocos de reconstrução simétricos. A atenção cruzada no gargalo permite que cada região da imagem escolha tokens relevantes do prompt, em vez de receber somente um vetor médio global. A resolução precisa ser divisível por quatro; portanto, os valores padrão 32×32, 64×64 e 128×128 são suportados.
 
-Cada timestep é convertido por `TimestepEmbedding` sinusoidal e projeções
-treináveis. O `PromptEncoder` é um encoder byte-level treinável do zero; a
-combinação de ambos modula blocos residuais por escala e viés. Ele é simples de
-propósito e pode ser substituído mais tarde por tokenização e condicionamento
-cross-attention sem mudar o scheduler ou o loop de treino.
+Cada timestep é convertido por `TimestepEmbedding` sinusoidal e projeções treináveis. `PromptEncoder` é um Transformer byte-level treinável do zero, com embeddings posicionais e máscara de padding. Seus tokens contextualizados alimentam tanto o vetor global que modula os blocos residuais por escala e viés como a atenção cruzada no gargalo. Durante o treino, o *classifier-free guidance* descarta a caption de forma independente por amostra, preservando uma rota incondicional sem duplicar o modelo.
 
-`NoiseScheduler` tem betas lineares configuráveis. No treino ele constrói
-`x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1-alpha_bar_t) * noise`; a MSE compara a
-saída do denoiser com esse `noise`. No sampling, começa com ruído gaussiano e
-aplica passos DDPM reversos até gerar uma imagem normalizada.
+`NoiseScheduler` cria `x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1-alpha_bar_t) * noise`; a MSE compara a saída do denoiser com esse `noise`. No sampling, começa com ruído gaussiano e usa transições DDIM corretas inclusive quando poucos passos de inferência saltam timesteps.
+
+## Treino, capacidade e checkpoints
+
+`DiffusionTrainingModel` adapta o `ProcessedDataLoader` e `Trainer` existentes, portanto usa imagens e metadados já processados sem segundo dataset. Seus checkpoints `.pt` incluem pesos, configuração e estado AdamW para retomada.
+
+Os valores padrão atuais (`base_channels=16`, condicionamento de 64 dimensões, dois blocos por nível e encoder textual de duas camadas) totalizam **542.515 parâmetros treináveis**, contra **27.947** na U-Net anterior: **514.568** parâmetros adicionais. O crescimento vem de capacidade funcional (profundidade multiescala, encoder sequencial e atenção texto-imagem), não de tensores sem uso. `count_trainable_parameters` expõe a contagem exata, que o script de treino também imprime.
 
 ## Limitações e evolução
 
-`DiffusionTrainingModel` adapta o `ProcessedDataLoader` e `Trainer` existentes,
-portanto usa as imagens e metadados já processados sem segundo dataset. Seus
-checkpoints `.pt` incluem pesos e estado AdamW para retomada.
+Esta ainda é uma fundação pequena, treinada somente com dados locais, e não produz anime profissional sem um dataset curado, resolução maior e tempo de treino suficiente. O condicionamento de cena/pose/identidade permanece como interface estrutural fora do denoiser; controles espaciais explícitos e consistência entre quadros ainda não foram implementados.
 
-`ModelConfig` e os YAMLs expõem resolução, canais-base, parâmetros de
-condicionamento, timesteps, passos de sampling, seed e parâmetros de treino.
-Os valores são deliberadamente modestos e não há download de pesos, APIs
-externas ou arquivos de pesos versionados.
-
-## Evolução profissional
-
-O modelo é uma fundação pequena e não produz anime profissional. Próximos
-passos incluem VAE treinável, U-Net mais profunda, melhor encoder de texto
-treinado no dataset, mais resolução e validação visual. Controles
-de personagem, pose, enquadramento e estilo da estrutura de cena poderão entrar
-como condicionamentos adicionais. Essas trocas preservam as APIs de latente,
-condicionamento e geração iterativa, permitindo crescer para um modelo
-especializado de anime e mangá sem reescrever a organização do projeto.
+Próximos passos coerentes são um autoencoder latente treinado do zero para escalar resolução, condicionadores estruturados de pose/layout/identidade ligados à atenção cruzada, augmentação local, EMA dos pesos para sampling, predição `v` e avaliação visual/reconstrução em conjunto de validação local. Essas trocas preservam scheduler, checkpoints e o loop de treino atuais.
