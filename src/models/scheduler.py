@@ -22,10 +22,28 @@ class NoiseScheduler:
         alpha_bar = self.alpha_bars[timesteps].view(-1, 1, 1, 1)
         return alpha_bar.sqrt() * clean_images + (1 - alpha_bar).sqrt() * noise
 
-    def step(self, predicted_noise: torch.Tensor, timestep: int, sample: torch.Tensor, generator: torch.Generator | None = None) -> torch.Tensor:
-        alpha, alpha_bar, beta = self.alphas[timestep], self.alpha_bars[timestep], self.betas[timestep]
-        mean = (sample - beta / (1 - alpha_bar).sqrt() * predicted_noise) / alpha.sqrt()
-        if timestep == 0:
-            return mean
-        variance = beta * (1 - self.alpha_bars[timestep - 1]) / (1 - alpha_bar)
-        return mean + variance.sqrt() * torch.randn(sample.shape, device=sample.device, dtype=sample.dtype, generator=generator)
+    def step(
+        self,
+        predicted_noise: torch.Tensor,
+        timestep: int,
+        sample: torch.Tensor,
+        *,
+        previous_timestep: int | None = None,
+        generator: torch.Generator | None = None,
+    ) -> torch.Tensor:
+        """Take one DDIM-style reverse step, including when timesteps are skipped.
+
+        DDPM's one-step posterior only applies to adjacent values.  Sampling
+        with a small number of inference steps skips values, so reconstructing
+        the clean image and moving directly to ``previous_timestep`` avoids an
+        incorrect reverse process and makes the final step deterministic.
+        """
+        if not 0 <= timestep < self.num_timesteps:
+            raise ValueError("timestep fora do intervalo do scheduler.")
+        previous_timestep = timestep - 1 if previous_timestep is None else previous_timestep
+        if not -1 <= previous_timestep < timestep:
+            raise ValueError("previous_timestep deve ser menor que timestep.")
+        alpha_bar = self.alpha_bars[timestep]
+        previous_alpha_bar = self.alpha_bars[previous_timestep] if previous_timestep >= 0 else torch.ones_like(alpha_bar)
+        predicted_clean = (sample - (1 - alpha_bar).sqrt() * predicted_noise) / alpha_bar.sqrt()
+        return previous_alpha_bar.sqrt() * predicted_clean + (1 - previous_alpha_bar).sqrt() * predicted_noise

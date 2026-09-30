@@ -27,6 +27,18 @@ class DiffusionTests(unittest.TestCase):
         self.assertFalse(self.torch.equal(noisy, images))
         self.assertEqual(self.model(noisy, times, ["anime boy", "manga city"]).shape, images.shape)
 
+    def test_scheduler_supports_skipped_steps_and_guidance_sampling(self) -> None:
+        from src.training.diffusion_model import DiffusionTrainingModel
+
+        sample = self.torch.randn(1, 3, 32, 32)
+        noise = self.torch.randn_like(sample)
+        stepped = self.scheduler.step(noise, 9, sample, previous_timestep=4)
+        self.assertEqual(stepped.shape, sample.shape)
+        trained = DiffusionTrainingModel(self.config, seed=1)
+        self.assertEqual(tuple(trained.sample(["anime hero"], 2, guidance_scale=2.0).shape), (1, 3, 32, 32))
+        with self.assertRaises(ValueError):
+            trained.sample([])
+
     def test_training_sampling_and_checkpoint(self) -> None:
         from src.models import Tensor
         from src.training.data import TrainingBatch

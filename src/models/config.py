@@ -18,6 +18,8 @@ class ModelConfig:
     time_embedding_dim: int = 32
     text_vocab_size: int = 256
     image_resolution: tuple[int, int] = (32, 32)
+    condition_dropout: float = 0.1
+    guidance_scale: float = 3.0
 
     def __post_init__(self) -> None:
         values = {
@@ -39,3 +41,7 @@ class ModelConfig:
             raise ValueError("image_resolution deve conter largura e altura positivas.")
         if any(dimension % self.downsample_factor for dimension in self.image_resolution):
             raise ValueError("image_resolution deve ser divisível por downsample_factor.")
+        if not 0 <= self.condition_dropout < 1:
+            raise ValueError("condition_dropout deve estar no intervalo [0, 1).")
+        if self.guidance_scale < 0:
+            raise ValueError("guidance_scale não pode ser negativo.")
