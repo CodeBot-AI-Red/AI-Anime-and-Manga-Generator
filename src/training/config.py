@@ -25,11 +25,21 @@ class TrainingConfig:
             raise ValueError("learning_rate deve ser positivo.")
         if self.batch_size <= 0 or self.save_every <= 0:
             raise ValueError("batch_size e save_every devem ser positivos.")
-        if self.device not in {"auto", "cpu"}:
-            raise ValueError("device deve ser 'auto' ou 'cpu' nesta implementação local.")
+        if self.device not in {"auto", "cpu", "cuda", "mps"}:
+            raise ValueError("device deve ser 'auto', 'cpu', 'cuda' ou 'mps'.")
         object.__setattr__(self, "checkpoint_dir", Path(self.checkpoint_dir))
 
     @property
     def resolved_device(self) -> str:
-        """Expõe o dispositivo realmente disponível sem depender de frameworks."""
+        """GPU quando disponível ('auto'); o perfil de grande porte precisa dela."""
+        if self.device != "auto":
+            return self.device
+        try:
+            import torch
+        except ImportError:
+            return "cpu"
+        if torch.cuda.is_available():
+            return "cuda"
+        if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
+            return "mps"
         return "cpu"

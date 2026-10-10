@@ -15,7 +15,7 @@ class DiffusionTests(unittest.TestCase):
         from src.models.config import ModelConfig
         from src.models.diffusion import DiffusionDenoiser, TimestepEmbedding, count_trainable_parameters
         from src.models.scheduler import NoiseScheduler
-        self.torch, self.config = torch, ModelConfig(image_resolution=(32, 32), base_channels=8, time_embedding_dim=16, num_timesteps=10, generation_steps=3)
+        self.torch, self.config = torch, ModelConfig.lite(image_resolution=(32, 32), base_channels=8, time_embedding_dim=16, num_timesteps=10, generation_steps=3)
         self.model, self.embedding, self.scheduler = DiffusionDenoiser(self.config), TimestepEmbedding(16), NoiseScheduler(10)
         self.count_trainable_parameters = count_trainable_parameters
 

@@ -1,9 +1,11 @@
-image_resolution: [32, 32]
-latent_channels: 16
-generation_steps: 4
-num_timesteps: 100
-sampling_steps: 8
-base_channels: 8
-text_embedding_dim: 32
+preset: large
+image_resolution: [256, 256]
+sampling_steps: 50
+guidance_scale: 7.5
+studio_rules: true
+studio_finish: true
+refine_rounds: 1
+target_score: 0.75
+strength: 0.6
 seed: 42
 prompt: "guerreira anime em uma cidade ao entardecer"

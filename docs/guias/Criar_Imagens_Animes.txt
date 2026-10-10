@@ -1,0 +1,1499 @@
+================================================================
+   GUIA COMPLETO — CRIAR CAPAS E CENAS DE ANIME COM IA
+   Para projetos originais de anime com partes geradas por IA
+   Compatível com: DALL-E 3 / ChatGPT, Midjourney, Leonardo AI
+================================================================
+
+SOBRE ESTE GUIA
+---------------
+Este guia foi criado com base em materiais reais de produção de
+anime japonês profissional (settei / color correction sheets de
+estúdios reais), incluindo referências de Akatsuki no Yona,
+Aquarion EVOL, Diamond no Ace e AKB0048.
+
+Use-o para gerar cenas com IA que se integrem visualmente ao
+estilo de animação tradicional do seu projeto.
+
+
+################################################################
+ PARTE 1 — O QUE FAZ UMA IMAGEM PARECER DE ESTÚDIO REAL
+################################################################
+
+Produção real (Ufotable, KyoAni, MAPPA, J.C.Staff) segue regras
+visuais muito específicas. Settei sheets de estúdio revelam isso:
+
+OS 7 PILARES DO LOOK PROFISSIONAL:
+
+  [1] OLHOS com estrutura em camadas:
+      - Fundo escuro (BL / Black Layer) — sombra da íris
+      - Íris com gradiente: escuro em cima, claro embaixo
+      - Catchlight branco grande (Hi) — reflexo principal
+      - Catchlight pequeno secundário (瞳Hi TP) — brilho interno
+      - Pupila preta com profundidade
+      - Esclerótica branca pura com leve tom azulado na borda
+
+  [2] LINEART variável — não uniforme:
+      - Silhueta externa: traço mais grosso (3–4px equivalente)
+      - Detalhes internos: traço fino (0,5–1px)
+      - Pontas afiladas (tapered) — sem cortes secos
+      - Cor da linha: RGB (61, 43, 40) — não preto puro #000000
+        (esta é a cor padrão de linha usada em produção real)
+
+  [3] CEL SHADING com bordas duras — zero gradiente nas sombras:
+      - Tom base (Normal / ノーマル)
+      - 1ª sombra (1号影 / Shadow 1): borda rígida
+      - 2ª sombra opcional (2号影): para áreas muito escuras
+      - Highlight (Hi): branco ou tom muito claro
+
+  [4] CABELO em grupos (mechas), não fios individuais:
+      - Cada personagem: 3 a 5 grupos (chunks) definidos
+      - Cada grupo: cor base + 1 área de sombra + 1 highlight (Hi)
+      - Highlight do cabelo: risco curvo branco/claro na curva do grupo
+      - Hairline (raiz) recebe sombra, não highlight
+
+  [5] PALETA POR PERSONAGEM — cada personagem tem sua própria
+      ficha de cores (settei) com swatches exatos para:
+      Pele (肌), Sombra de pele, Cabelo, Sombra de cabelo,
+      Destaque de cabelo (Hi), Esclerótica, Íris (瞳), BL, Hi geral
+
+  [6] COMPOSIÇÃO não centralizada — regra dos terços sempre
+
+  [7] SOMBRA DE CHÃO: a sombra projetada no chão usa cor
+      RGB: 255, 0, 255 (magenta puro) como marcador de cor em
+      produção real — substitua pelo tom do ambiente na cena final
+
+
+################################################################
+ PARTE 2 — SISTEMA DE CORES (baseado em settei reais)
+################################################################
+
+--------------------------------------------------
+ 2.1 PALETAS POR ESTILO — com valores reais de produção
+--------------------------------------------------
+
+PALETA 1 — FANTASIA HISTÓRICA / ORIENTAL
+(referência: Akatsuki no Yona)
+
+  Pele base:        Bege rosado claro    #F5CBA7
+  Pele — 1ª sombra: Rosa acinzentado    #D4A5A0
+  Pele — 2ª sombra: Marrom avermelhado  #B07060
+  Esclerótica:      Branco puro          #FFFFFF
+  Íris feminina:    Violeta médio        #8870C0
+  Íris masculina:   Azul aço             #4060A0
+  BL (Black Layer): Preto quase puro     #1A1A1A
+  Hi (catchlight):  Branco puro          #FFFFFF
+  Cabelo vermelho:  Carmim vibrante      #C03040
+  Sombra cabelo:    Bordô escuro         #6A1020
+  Hi cabelo:        Rosa claro           #FF8090
+  Linha de contorno: Marrom escuro       RGB(61,43,40)
+  Roupa clara:      Rosa empoeirado      #F0D0D0
+  Roupa escura:     Azul marinho         #1E2D6E
+
+  USO NO PROMPT:
+  "historical fantasy anime color palette, warm rosewood tones,
+  traditional East Asian costume palette, flat cel shading,
+  deep crimson hair with pink highlight streak,
+  violet iris with white catchlight, Akatsuki no Yona art style"
+
+---
+
+PALETA 2 — AÇÃO / SCI-FI (referência: Aquarion EVOL)
+
+  Pele base:        Bege dourado         #FFCC80
+  Pele — 1ª sombra: Caramelo quente      #E08050
+  Esclerótica:      Branco azulado       #F0F4FF
+  Íris:             Azul brilhante       #20A0FF
+  Cabelo escuro:    Preto azulado        #1A1A2E
+  Sombra cabelo:    Azul muito escuro    #0D0D1A
+  Hi cabelo:        Branco azulado       #C0D8FF
+  Linha de contorno: Marrom escuro       RGB(61,43,40)
+  Roupa primária:   Verde petróleo       #006064
+  Acento:           Magenta vibrante     #E91E8C
+  Efeito de energia: Ciano elétrico      #00E5FF
+
+  USO NO PROMPT:
+  "sci-fi mecha anime color palette, dark navy and magenta accents,
+  electric blue energy effects, cel shading, dramatic lighting,
+  Aquarion EVOL visual style, saturated complementary colors"
+
+---
+
+PALETA 3 — ESPORTIVO / SHONEN (referência: Diamond no Ace)
+
+  Pele base:        Bege médio           #F0C080
+  Pele — 1ª sombra: Caramelo            #D08050
+  Sombra secundária: Marrom             #A06030
+  Esclerótica:      Branco puro          #FFFFFF
+  Íris:             Marrom âmbar         #804020
+  Cabelo:           Marrom escuro        #3A2010
+  Hi cabelo:        Dourado sujo         #C08040
+  Uniforme branco:  Branco #FFFFFF + sombra cinza azulado #B0B8C8
+  Acento uniforme:  Azul marinho         #1A3080
+  Acento dourado:   Âmbar               #C08000
+
+  USO NO PROMPT:
+  "sports anime color palette, warm natural skin tones,
+  athletic uniform design with navy and white,
+  realistic but stylized cel shading, Diamond no Ace visual quality,
+  expressive face with determined look"
+
+---
+
+PALETA 4 — IDOL / MAHOU SHOUJO (referência: AKB0048)
+
+  Pele base:        Creme rosado         #FFEECC
+  Pele — 1ª sombra: Rosa suave          #F0C0B0
+  Esclerótica:      Branco puro          #FFFFFF
+  Íris:             Cores variadas por personagem (ver abaixo)
+  Cabelo base:      Varia por personagem
+  Hi cabelo (Hi TP): Elipse branca no topo do grupo de mechas
+  Hi interior (Hi♡):Forma de coração ou oval menor interno
+  Linha de contorno: Mesma cor do cílio (muda por personagem)
+  Figurino:         Rosa choque #FF69B4 / Branco / Dourado #FFD700
+
+  ÍRIS POR COR:
+  Rosa:   gradiente #FF6080 → #FF90A0, catchlight branco
+  Roxo:   gradiente #8040C0 → #C080FF, catchlight branco
+  Verde:  gradiente #208040 → #60C080, catchlight branco
+  Azul:   gradiente #2060C0 → #60A0FF, catchlight branco
+
+  USO NO PROMPT:
+  "idol anime color palette, pastel and vivid pink tones,
+  sparkle effects, layered eye catchlight structure,
+  heart-shaped inner eye reflection, AKB0048 visual style,
+  soft cel shading with vibrant saturated colors"
+
+---
+
+PALETA 5 — DARK / SEINEN / GUERREIRO
+
+  Pele base:        Bege acinzentado     #D7C8B8
+  Pele — 1ª sombra: Cinza esverdeado    #A09888
+  Esclerótica:      Branco amarelado     #F8F0E0
+  Íris:             Tons apagados (cinza, âmbar, verde)
+  Cabelo:           Preto, marrom escuro ou cinza
+  Hi cabelo:        Quase inexistente — apenas traço fino
+  Linha de contorno: Marrom muito escuro RGB(40,30,25)
+  Roupa:            Tons de terra, couro, metal fosco
+  Efeito:           Manchas de batalha, rasgos, suor
+
+  USO NO PROMPT:
+  "dark fantasy anime color palette, muted earth tones,
+  gritty warrior aesthetic, minimal hair highlight,
+  battle-worn clothing details, high contrast shadows,
+  Berserk or Vinland Saga visual grit, desaturated palette"
+
+
+--------------------------------------------------
+ 2.2 FRASES DE COR PARA ADICIONAR AO PROMPT
+--------------------------------------------------
+
+  "cel shading with crisp shadow edge, no gradient blending"
+    → sombra dura, borda precisa — padrão de produção real
+
+  "hair highlight as curved white streak on each chunk group"
+    → highlight de cabelo como risco oval, não como brilho difuso
+
+  "iris gradient from dark [cor] at top to light [cor] at bottom"
+    → gradiente de íris do escuro para o claro — de cima pra baixo
+
+  "lineart color RGB 61 43 40, not pure black"
+    → cor de linha de produção real, não preto absoluto
+
+  "two catchlight dots: large primary, small secondary offset"
+    → dois pontos de reflexo no olho — grande + pequeno deslocado
+
+  "character facing 3/4 angle left, looking into frame space"
+    → ângulo padrão de settei / ficha de personagem
+
+
+################################################################
+ PARTE 3 — TÉCNICAS DE DESENHO (baseadas em produção real)
+################################################################
+
+--------------------------------------------------
+ 3.1 OLHOS — estrutura em camadas (guia AKB0048)
+--------------------------------------------------
+
+Ordem de camadas em produção real (de baixo pra cima):
+  1. Esclerótica (白目) — branco puro
+  2. BL / Black Layer — sombra da íris, forma oval
+  3. Íris com gradiente (瞳)
+  4. Pupila escura centralizada
+  5. Catchlight principal (Hi) — oval grande na íris, lado direito
+  6. Catchlight interno (瞳Hi TP) — não pode sangrar fora da íris
+  7. Reflexo em coração/oval (瞳♡ TP) — opcional, muda por cena
+  8. Cílio superior (まつ毛) — traço grosso e curvo acima
+  9. Cílio inferior — traço fino abaixo
+
+  REGRAS CRÍTICAS observadas em material real:
+  - Os catchlights NÃO podem sangrar além da borda da íris
+  - A cor do contorno do olho é a MESMA cor do cílio (muda por personagem)
+  - Em cenas muito fechadas (do-up), pode aparecer serrilhado no cílio —
+    normal em produção, eliminar apenas na finalização
+
+  PROMPT DE OLHOS:
+  "detailed anime eye with proper layered structure:
+  dark BL shadow base inside iris, gradient iris from dark [cor] at top
+  to lighter [cor] at bottom, large primary catchlight (oval, top-right),
+  small secondary inner catchlight (瞳Hi, contained within iris),
+  deep black pupil at center, thick curved upper eyelash line,
+  thin lower lash, pure white sclera. No catchlight bleeding outside iris."
+
+
+--------------------------------------------------
+ 3.2 CABELO — sistema de mechas (grupos)
+--------------------------------------------------
+
+Cada personagem em settei tem seu próprio padrão de mechas.
+Baseado em material real, as regras são:
+
+  - Mechas não sangram além da raiz (hairline) — raiz recebe cor de sombra
+  - Highlight do cabelo (髪Hi TP): oval ou elipse no topo de cada grupo
+  - Highlight interno (髪♡ TP): forma de coração ou oval menor dentro do grupo
+  - Em retroiluminação (逆光): o Hi muda para cor de sombra, não branco
+  - Personagens com cabelo bicolor: área interna usa cor do lado dividido
+
+  PROMPT DE CABELO:
+  "anime hair rendered in 3-5 defined chunk groups,
+  each chunk: flat base color + hard-edge shadow area + one oval highlight streak,
+  hairline/roots in shadow color, no individual strand chaos,
+  highlights as soft oval shapes on top curve of each chunk,
+  hair direction follows gravity, organized and clean like settei sheet art"
+
+  Por tipo de cabelo:
+  Longo liso:   "parallel chunk groups, two oval highlights, gentle S-curve flow"
+  Curto espetado: "sharp pointed spike groups, highlight on spike face,
+                   shonen energy, gravity-defying direction"
+  Ondulado:     "curved chunk groups, highlights on outer curve peaks"
+  Trança:       "interlocked segment groups, single highlight per segment row"
+  Bob curto:    "smooth outer silhouette, one central oval highlight"
+
+
+--------------------------------------------------
+ 3.3 PELE — cel shading em camadas
+--------------------------------------------------
+
+  Tom base (Normal): cor plana sem textura, sem poros
+  1ª sombra: borda rígida, sem blur — aplicada sob nariz, queixo,
+             pescoço, bordas do cabelo e dobras de roupa
+  2ª sombra (opcional): áreas muito fundas — axila, interior de boca
+
+  Cores de sombra por paleta:
+  Personagem claro:  sombra em rosa lavanda frio #C8A0B0
+  Personagem médio:  sombra em caramelo #D08050
+  Personagem escuro: sombra em marrom ocre #A06030
+
+  PROMPT DE PELE:
+  "flat anime skin tone, single hard-edge cel shadow under nose,
+  chin, neck and hair edges, no photorealistic texture,
+  no pores, no gradient blending on skin surface,
+  shadow color in cool lavender-pink tone"
+
+
+--------------------------------------------------
+ 3.4 ROUPAS E DOBRAS
+--------------------------------------------------
+
+  Em produção real, as dobras são:
+  - Angulares, não arredondadas
+  - Concentradas em pontos de tensão (cotovelos, joelhos, cintura)
+  - Shading duro: base + 1 sombra, borda rígida
+
+  PROMPT DE ROUPAS:
+  "anime clothing with angular fold lines at tension points
+  (elbows, waist, knees), flat cel shading on fabric,
+  single hard-edge shadow following fold direction,
+  no realistic cloth texture, clean defined silhouette"
+
+
+--------------------------------------------------
+ 3.5 COMPOSIÇÃO
+--------------------------------------------------
+
+  FICHA DE PERSONAGEM (settei / turnaround):
+  "character design turnaround sheet showing front and 3/4 view,
+  color palette swatches labeled beside each element,
+  gray neutral background #808080, character centered at full height,
+  no background elements, annotation lines pointing to key areas"
+
+  CENA DRAMÁTICA (key visual):
+  "character on left/right third of frame, face at upper intersection,
+  rule of thirds composition, dynamic off-center framing,
+  breathing room in direction of gaze"
+
+  TRIANGULAR (grupo de personagens):
+  "triangular character arrangement, protagonist front-center,
+  supporting characters behind at mid-height,
+  overlapping figures to create depth, settei group composition"
+
+  AÇÃO / BATALHA:
+  "diagonal composition, action lines from top-left to bottom-right,
+  character at 30-degree angle, motion blur on trailing elements,
+  impact lines radiating from point of contact"
+
+
+################################################################
+ PARTE 4 — PROMPTS COMPLETOS PRONTOS PARA USAR
+################################################################
+
+--------------------------------------------------
+ PROMPT A: FICHA DE PERSONAGEM (tipo settei sheet)
+--------------------------------------------------
+
+"Create an anime character design sheet in professional
+Japanese anime studio style (settei / color correction sheet).
+
+CHARACTER: [descreva seu personagem — sexo, cabelo, roupa, etc.]
+
+LAYOUT: Full body front view on left, 3/4 angle on right.
+Zoomed face view at upper right corner.
+Eye close-up showing iris structure at lower right.
+Color palette swatches beside each element (hair, skin, outfit, eyes),
+labeled with arrows pointing to the corresponding part.
+Neutral gray background #808080.
+
+ART STYLE:
+Lineart color RGB(61,43,40) — not pure black.
+Variable weight lines: thick outer silhouette, thin interior details.
+Flat cel shading with single hard-edge shadow on all surfaces.
+No gradient shading, no photorealistic texture.
+
+EYES: Layered structure — dark BL shadow base, gradient iris,
+large oval catchlight at top-right, small inner secondary catchlight,
+thick curved upper eyelash, pure white sclera.
+
+HAIR: 3-5 defined chunk groups, oval highlight on each chunk top,
+roots/hairline in shadow color, no individual strand chaos.
+
+SKIN: Flat base tone, single cool-toned shadow, no texture.
+
+Output: professional anime production quality,
+no text, no watermarks."
+
+
+--------------------------------------------------
+ PROMPT B: CENA DE AÇÃO / BATALHA
+--------------------------------------------------
+
+"Anime action scene in professional studio quality.
+
+SCENE: [descreva a cena e os personagens]
+
+COMPOSITION: Diagonal layout, character at dynamic angle,
+action lines and speed lines emphasizing movement direction.
+Low camera angle looking up at character (worm's eye view)
+to convey power and intensity.
+
+LIGHTING: Strong directional light from upper-left (warm golden),
+cool blue rim light on silhouette edges from behind,
+high contrast between lit and shadow areas.
+
+CEL SHADING: Hard-edge shadow only, no gradients.
+Shadow areas deeply saturated and cool-toned.
+Highlight areas pushed warm and bright.
+
+EFFECTS: Motion blur on fast-moving limbs,
+impact flash (white radial burst) at point of force,
+wind distortion on hair and clothing trailing edges,
+atmospheric particles (dust, energy sparks) in foreground.
+
+COLOR GRADE: High contrast, vivid saturated palette,
+dominant [cor primária] with [cor de acento] clash.
+
+Output: Ultra detailed, cinematic crop 16:9,
+no text, no watermarks."
+
+
+--------------------------------------------------
+ PROMPT C: CENA EMOCIONAL / DRAMA
+--------------------------------------------------
+
+"Anime emotional scene, single character, close-up or medium shot.
+
+CHARACTER: [descreva o personagem]
+
+EXPRESSION: [tristeza / raiva / alívio / determinação / etc.]
+Eyes showing emotional state: subtle tear gloss,
+or intense sharp gaze, or soft downward look.
+
+LIGHTING: Soft diffused light from one side only.
+Opposite side in gentle shadow.
+If sad scene: cool blue-grey ambient, desaturated.
+If hopeful scene: warm golden backlight as rim lighting.
+
+BACKGROUND: Blurred and simplified — 3 depth planes.
+Soft bokeh on background elements.
+Color temperature matches emotional tone:
+warm for hope/joy, cool for sadness/tension.
+
+CEL SHADING: Softer shadow edge than action scenes,
+but still defined — not gradient. Gentle cel style.
+
+OUTPUT: Portrait format 2:3, emotional atmosphere,
+studio quality, no text."
+
+
+--------------------------------------------------
+ PROMPT D: CENA NOTURNA / LUZ ARTIFICIAL
+--------------------------------------------------
+
+"Anime night scene with artificial lighting in professional style.
+
+SCENE: [descreva o ambiente — rua, quarto, palco, etc.]
+
+LIGHTING SETUP (nighttime color):
+Main light: warm artificial source (lamp, screen, fire)
+  Color: amber #FF8C00 or neon [cor], casting on character from below
+Fill light: cool ambient moonlight or sky glow
+  Color: blue-grey #6080A0, soft and dim
+Rim light: optional — matches main light color on silhouette edges
+
+CHARACTER: Strong contrast between lit and unlit areas.
+Shadow areas very dark and cool.
+Lit areas warm and punchy.
+
+BACKGROUND: Night sky gradient from deep blue #0A0A2E at top
+to lighter navy at horizon. City lights or stars as bokeh.
+Atmospheric haze on distant elements.
+
+CEL SHADING: High contrast version — deeper shadows,
+brighter highlights, still hard-edge (no gradient blur).
+
+Color temperature: split — warm lit zones, cold shadow zones.
+Output: cinematic, no text, no watermarks."
+
+
+################################################################
+ PARTE 5 — CRIANDO CONSISTÊNCIA ENTRE CENAS
+################################################################
+
+Para um anime original, consistência entre cenas é crítica.
+Use estas estratégias para manter coerência visual:
+
+--------------------------------------------------
+ 5.1 FICHA DE REFERÊNCIA DO SEU PERSONAGEM
+--------------------------------------------------
+
+Antes de gerar cenas, crie uma ficha com o prompt A acima.
+Salve os valores de cor que a IA gerou.
+Em cada novo prompt de cena, adicione:
+
+"REFERENCE COLORS — maintain exactly:
+Hair: [cor hex que a IA usou]
+Skin: [cor hex]
+Eyes: [cor hex]
+Outfit primary: [cor hex]
+Lineart: RGB(61,43,40)
+This character must be visually identical to the reference sheet."
+
+--------------------------------------------------
+ 5.2 PALETA GLOBAL DO ANIME
+--------------------------------------------------
+
+Defina 4 a 5 cores que aparecem em todas as cenas:
+
+"SERIES COLOR PALETTE — apply to entire scene:
+Dominant: [cor hex]
+Secondary: [cor hex]
+Accent: [cor hex]
+Shadow temperature: cool [cor hex]
+Highlight temperature: warm [cor hex]
+All scenes must share this color DNA."
+
+--------------------------------------------------
+ 5.3 ESTILO DE LUZ PADRÃO
+--------------------------------------------------
+
+Escolha um e mantenha em todo o projeto:
+  Opção 1: "warm key light from upper-left, cool fill from right"
+  Opção 2: "dramatic backlight from behind, character front in shadow"
+  Opção 3: "flat even lighting, shading from form only (no cast shadows)"
+  Opção 4: "natural daylight from above, neutral shadows"
+
+--------------------------------------------------
+ 5.4 ESTÚDIO DE REFERÊNCIA — adicione ao final de cada prompt
+--------------------------------------------------
+
+Para consistência de estilo visual em todo o projeto:
+  Fantasia épica oriental:  "Akatsuki no Yona (Pierrot Studio) art quality"
+  Ação / combate:           "Demon Slayer (Ufotable) cel shading quality"
+  Sci-fi / mecha:           "Aquarion EVOL (Satelight) visual style"
+  Escola / drama:           "Violet Evergarden (KyoAni) animation quality"
+  Idol / musical:           "AKB0048 (Satelight) character design style"
+  Esporte / shonen:         "Diamond no Ace (Madhouse) art quality"
+  Dark / seinen:            "Vinland Saga (WIT Studio) gritty realism"
+
+
+################################################################
+ RESUMO RÁPIDO — FÓRMULA BASE
+################################################################
+
+[descrição do personagem com cores específicas]
++ "RGB(61,43,40) lineart, variable weight"
++ "hard-edge cel shading, no gradient"
++ "chunked anime hair with oval highlights"
++ "layered anime eyes: BL base, gradient iris, oval catchlight"
++ "flat skin tone, single cool shadow, no texture"
++ "rule of thirds composition"
++ "[estúdio de referência] art quality"
++ "ultra detailed, no text, no watermarks"
+
+================================================================
+  Guia criado com Claude (Anthropic)
+  Baseado em settei sheets de produção real de anime japonês
+  Arquivo 1 de 2 — Criar | Versão 2.0
+================================================================
+
+
+################################################################
+ PARTE EXTRA — BIBLIOTECA DE REFERÊNCIAS COLETADA DOS SITES
+ (atualizado em 03/10/2026 — conteúdo extraído de 27 fontes)
+################################################################
+
+
+==================================================
+ [1] https://powerfulwebsites.io/site/setteidreams.net
+==================================================
+LINK ORIGINAL: https://powerfulwebsites.io/site/setteidreams.net
+FONTE / AUTOR(ES):
+Settei Dreams (Arquivo de fãs / Curadoria colaborativa).
+
+RESUMO:
+O Settei Dreams é um arquivo especializado em "settei" — as folhas de modelo oficiais utilizadas na produção de animes. O site serve como um repositório técnico que preserva desenhos de referência fundamentais para manter a consistência visual em grandes estúdios. O conteúdo inclui designs de personagens (model sheets), acessórios (props), cenários (background concept art) e guias de cores, sendo um recurso essencial para treinar IAs na anatomia e estilo específicos do meio japonês.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Model Sheets (Personagens): Desenhos de "turnaround" mostrando o personagem em 360 graus (frente, perfil, costas e 3/4). Úteis para ensinar à IA a volumetria constante de roupas e cabelo.
+- Expressões: Folhas focadas em "facial expressions", detalhando como os olhos e a boca se alteram em emoções extremas (raiva, choro, alegria), mantendo a estrutura óssea do design original.
+- Linha e Cel Shading: O material enfatiza o uso de linhas limpas (clean lineart) e a marcação precisa de sombras de dois tons (shadow e highlight) para o processo de colorização digital.
+- Props e Mecha: Detalhamento técnico de objetos e veículos, garantindo que a IA entenda a funcionalidade mecânica integrada ao estilo artístico.
+- Gráficos de Cores: Tabelas que definem os tons exatos de pele, cabelo e vestimenta sob diferentes iluminações (dia, noite, pôr do sol).
+
+TUTORIAL PASSO A PASSO:
+1. Para gerar imagens com consistência de estúdio, utilize termos como "settei", "character sheet" ou "production art" no prompt inicial.
+2. Adicione "flat color" e "lineart" para simular o visual de pré-produção.
+3. Use "full body turnaround" para obter múltiplos ângulos do mesmo personagem na mesma imagem.
+4. Para detalhes faciais, especifique "expression sheet" com termos como "shouting", "crying" e "smiling".
+5. Para simular a qualidade de estúdio antigo, adicione "vintage 90s anime aesthetic" ou "cel shaded".
+
+IMAGENS RELEVANTES:
+- Personagem Turnaround (Frente, Perfil, Costas) - https://powerfulwebsites.io/screenshots/setteidreams-net.png
+- Logo Oficial Settei Dreams - https://powerfulwebsites.io/logos/setteidreams-net.png
+
+
+==================================================
+ [2] https://archivesofanimation.com/
+==================================================
+LINK ORIGINAL: https://archivesofanimation.com/
+O site Archives of Animation é um repositório histórico de materiais de produção (settei) voltados para preservação, oferecendo model sheets, storyboards e correções de animação originais. Ele funciona como uma biblioteca de referência técnica para entender a estrutura de animes clássicos e modernos, essencial para estudar a fidelidade visual de estúdio.
+
+FONTE / AUTOR(ES):
+Archives of Animation (preservado por Aquantis).
+
+RESUMO:
+O portal disponibiliza materiais brutos de produção conhecidos como Settei (folhas de configuração). Estes documentos são os manuais oficiais usados por animadores para manter a consistência de personagens, cenários e efeitos. O conteúdo abrange desde animes orientais até animações ocidentais, incluindo scripts, press kits e guias de estilo de mercadorias.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Settei (Model Sheets): São desenhos técnicos em preto e branco que definem as proporções exatas, rotações de 360 graus do personagem e detalhes de vestuário. Para IA, isso ensina "consistência de personagem".
+- Animation Corrections (Genga/Douga): Cópias de desenhos com anotações de diretores de animação que mostram onde o traço deve ser refinado para atingir a "qualidade de estúdio".
+- Color Guides: Esquemas que definem as cores exatas para sombras (shadow), tons médios e brilhos (highlight), fundamentais para aplicar o Cel Shading correto.
+- Storyboards e Scripts: Ajudam a entender o enredo visual e o enquadramento de câmera (layout) que define o estilo cinematográfico do anime.
+
+TUTORIAL PASSO A PASSO:
+1. Identificação de Estilo: Use o site para localizar o "Settei" de uma série específica. Observe o traço limpo e a ausência de texturas complexas.
+2. Prompts de Estrutura: Ao gerar imagens, utilize termos como "settei style", "model sheet", "character reference sheet" e "orthographic views" para obter múltiplos ângulos do mesmo personagem.
+3. Refinamento de Traço: Para emular o acabamento de estúdio, peça por "clean lineart" e "production art", evitando o aspecto de fanart digital excessivamente renderizada.
+4. Aplicação de Cor: Observe as marcações de sombra nos modelos originais. No prompt, especifique "flat color" ou "limited palette" com "hard cel shading" para replicar a estética de produção industrial.
+
+IMAGENS RELEVANTES:
+- Personagem em T-Pose/Rotação - (Representação de Model Sheet)
+- Expressões Faciais em Grade - (Representação de Expression Sheet)
+- Cenários em Linha de Lápis - (Representação de Background Layout)
+- Esquema de Cores Numerado - (Representação de Color Key)
+
+
+==================================================
+ [3] https://archivesofanimation.com/SetteiModelSheets.html
+==================================================
+LINK ORIGINAL: https://archivesofanimation.com/SetteiModelSheets.html
+FONTE / AUTOR(ES):
+Archives of Animation (Site especializado em preservação de materiais de produção de animação).
+
+RESUMO:
+A página funciona como um diretório alfabético massivo de "Settei" (model sheets ou folhas de modelo) originais de estúdios. O site é um recurso fundamental para entender o design de personagens, acessórios, cenários e paletas de cores de produções que vão desde clássicos dos anos 80 até animes modernos e produções ocidentais (Disney, Hanna-Barbera). O conteúdo extraído foca na estrutura de design profissional usada por animadores para manter a consistência visual de uma série.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+Model Sheets (Settei): São desenhos técnicos usados em estúdios para definir as proporções exatas de um personagem. Eles geralmente incluem a visão frontal, lateral, 3/4 e traseira (turnaround).
+Expressões (Hyoujou): Folhas específicas que mostram como os olhos, sobrancelhas e boca reagem a diferentes emoções (raiva, alegria, choque), essenciais para manter o "off-model" (distorção indesejada) sob controle.
+Acessórios (Prop Design): Detalhamento de itens usados pelos personagens (armas, celulares, veículos) para garantir que a escala em relação ao personagem seja mantida.
+Cenários (Background Settei): Desenhos de linha (lineart) de ambientes internos e externos, definindo a perspectiva e a arquitetura do mundo do anime.
+
+TUTORIAL PASSO A PASSO:
+1. Referência de Proporção: Ao criar um personagem, desenhe uma "Height Chart" (tabela de altura) comparando-o com outros do elenco para definir a escala.
+2. Construção de Turnaround: Use linhas horizontais guia para alinhar olhos, ombros, cintura e joelhos nas vistas de frente e perfil.
+3. Detalhamento de Cabelo: Nos settei, o cabelo é dividido em mechas principais com indicações de fluxo para que o animador saiba como ele se move no vento ou ação.
+4. Aplicação de Sombras (Kage): Use linhas finas (geralmente vermelhas ou azuis nos originais) para delimitar onde o Cel Shading (sombra sólida) deve ser aplicado.
+
+IMAGENS RELEVANTES:
+As URLs abaixo direcionam para as galerias específicas de cada obra, onde os model sheets podem ser visualizados:
+1. .hack//SIGN (Design estilizado e etéreo) - https://archivesofanimation.com/settei/hackSign-settei.html
+2. Akame ga Kill! (Design de armas e ação) - https://archivesofanimation.com/settei/AkamegaKill-settei.html
+3. Attack on Titan (Proporções realistas e equipamentos complexos) - https://archivesofanimation.com/settei/AttackOnTitan-settei.html
+4. Cowboy Bebop (Estilo clássico dos anos 90, design de naves) - https://archivesofanimation.com/settei/CowboyBebop-settei.html
+5. Death Note (Sombreamento dramático e expressões faciais) - https://archivesofanimation.com/settei/DeathNote-settei.html
+6. Fate/Stay Night (Armaduras detalhadas e efeitos visuais) - https://archivesofanimation.com/settei/FateStayNight-settei.html
+7. Fullmetal Alchemist (Consistência de escala e mecânica automail) - https://archivesofanimation.com/settei/FullmetalAlchemist-settei.html
+8. Hunter x Hunter (Variedade de silhuetas de personagens) - https://archivesofanimation.com/settei/HunterXHunter-settei.html
+9. Inu Yasha (Design de vestimentas tradicionais e criaturas) - https://archivesofanimation.com/settei/InuYasha-settei.html
+10. JoJo's Bizarre Adventure (Estética muscular e poses exageradas) - https://archivesofanimation.com/settei/JoJosBizarreAdventure-settei.html
+11. Kakegurui (Expressões faciais extremas e uniformes) - https://archivesofanimation.com/settei/Kakegurui-settei.html
+12. Sailor Moon (Estética Shojo clássica e transformações) - https://archivesofanimation.com/settei/BishoujoSenshiSailorMoon-settei.html
+
+
+==================================================
+ [4] https://archive.org/
+==================================================
+LINK ORIGINAL: https://archive.org/
+O site Archive.org (Internet Archive) é uma biblioteca digital sem fins lucrativos que armazena milhões de livros, filmes, softwares, músicas e páginas da web históricas. Para gerar imagens de anime, use-o como a maior fonte gratuita de "settei" (model sheets), mangás clássicos e referências de animação antiga (cel shaded) através de suas vastas coleções de mídia.
+
+FONTE / AUTOR(ES):
+Internet Archive (Archive.org).
+
+RESUMO:
+O repositório oferece acesso a milhões de itens de mídia. Para o desenvolvimento de arte de anime, as seções mais úteis são "Movies" (filmes e animações antigas), "Texts" (mangás e livros de arte escaneados) e "Images" (galerias de ilustrações). É uma ferramenta essencial para estudar a evolução do estilo de animação japonesa desde os anos 60 até a era digital.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+O site permite pesquisar por termos técnicos que ajudam a definir a estética de estúdio:
+- Model Sheets (Settei): O arquivo contém documentos de produção de animes clássicos que mostram o design de personagens em vista frontal, lateral e traseira.
+- Cel Shading: Através da coleção de vídeos, é possível extrair frames para estudar a aplicação de sombras sólidas (hard edge) típicas de animações pré-2000.
+- Paletas de Cor: A biblioteca de "Vintage Software" e jogos clássicos serve de referência para paletas de cores limitadas de 8 e 16 bits.
+- Expressões e Anatomia: A seção de "Books by Language" possui manuais técnicos de desenho japoneses que detalham a construção de olhos, cabelos e proporções heroicas.
+
+TUTORIAL PASSO A PASSO:
+1. Acesse o site e use a barra de busca central.
+2. Para referências de design, pesquise por "[Nome do Anime] Settei" ou "[Nome do Estúdio] Artbook".
+3. Filtre os resultados à esquerda por "Images" ou "Texts" para encontrar manuais de design.
+4. Utilize a ferramenta "Wayback Machine" para acessar sites de estúdios de anime antigos (como Gainax ou Toei) e ver como os modelos eram apresentados nos anos 90/00.
+5. Baixe os arquivos em alta resolução (PDF ou JPEG) para alimentar modelos de IA (LoRA training) com estilos consistentes de épocas específicas.
+
+IMAGENS RELEVANTES:
+- Coleção de Imagens Gerais - https://archive.org/details/image
+- Arquivo de Vídeos e Animações - https://archive.org/details/movies
+- Coleção de Software e Jogos Vintage - https://archive.org/details/software
+- Galeria de Artes e Música - https://archive.org/details/artsandmusicvideos
+
+
+==================================================
+ [5] https://characterdesignreferences.com/visual-library
+==================================================
+LINK ORIGINAL: https://characterdesignreferences.com/visual-library
+FONTE / AUTOR(ES):
+Character Design References (CDChallenge).
+
+RESUMO:
+A Visual Library é um hub curado de referências visuais, model sheets e tutoriais voltados para animação, filmes e jogos. O site funciona como um diretório estruturado que categoriza elementos fundamentais do design de personagens (anatomia, vestuário, poses) e desenvolvimento visual (cenários, veículos, adereços), servindo como base técnica para artistas que buscam o padrão de qualidade da indústria de entretenimento.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Anatomia e Proporção: Divisão detalhada por partes do corpo (olhos, nariz, mãos, torso) e por demografia (bebês, adolescentes, idosos, tipos físicos fortes ou robustos).
+- Model Sheets (Settei): Ênfase em turnarounds (giro de personagem) para homens, mulheres e crianças, essencial para manter a consistência volumétrica em 360 graus.
+- Poses e Gestos: Categorização de ações dinâmicas, incluindo ciclos de caminhada, corrida, voo, combate (boxe, artes marciais, esgrima) e interações sociais (abraços, beijos, casais).
+- Vestuário e Props: Biblioteca histórica e temática abrangendo desde eras pré-históricas, vitorianas e samurais até designs futuristas e exoesqueletos. Foca no caimento (drapery) e na silhueta das roupas.
+- Linha e Silhueta: Uso de miniaturas (thumbnails) e estudos de silhueta para garantir que o design do personagem seja reconhecível apenas pelo contorno antes da adição de detalhes.
+
+TUTORIAL PASSO A PASSO:
+1. Definição da Silhueta: Comece criando formas pretas sólidas para definir a atitude e clareza do personagem.
+2. Construção Anatômica: Utilize as referências de ossos e órgãos da biblioteca para estruturar o volume básico antes dos músculos.
+3. Estudo de Rotação (Turnaround): Desenhe o personagem de frente, perfil, 3/4 e costas para assegurar a tridimensionalidade.
+4. Aplicação de Expressões e Olhos: Utilize os boards de "GirlsFaces" ou "MenFaces" para mapear a deformação dos olhos e boca conforme a emoção.
+5. Dinâmica de Movimento: Aplique os guias de "Action Line" e "Walk Cycle" para dar fluidez à animação.
+
+IMAGENS RELEVANTES:
+- Olhos (Referência de Anatomia) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1482871691819-P1H9TYOKR33JOOSYP8N8/RefThumb-10.png
+- Mãos (Referência de Anatomia) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1482871703614-ZR7JFNHORTXFVXI74DE9/RefThumb-18.png
+- Faces de Garotas (Expressões) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1691798314276-TEL9AJBGW9J3JNMRIK8E/REF-GirlsFaces-min.jpg
+- Line-Up (Comparação de Altura) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1691798317555-UKUKAIRAS4U9Q3J7EEBD/REF-LineUp-min.jpg
+- Turnarounds Masculinos (Model Sheets) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1482883356576-94I91FFCEDY0AVXF44LK/RefThumb-143.png
+- Roupas Vitorianas (Figurino) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1691798323162-FA7E27YTLS29HQI65S46/REF-Victorians-min.jpg
+- Cabelos (Referência de Anatomia) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1482871691031-SFLVTFBSJ3SN4Z5I3NVI/RefThumb-9.png
+- Poses de Beijo (Interação) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1691798316504-ZUUJFF4AZODMRIXEL60E/REF-Kissing-min.jpg
+- Mecha e Robôs (Hard Surface) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1691798317684-SH8R52HKHBM6NK60UHRW/REF-Mecha-min.jpg
+- Poses de Ação/Tiro - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1691798321952-E8UXG3YCCENFJQI11AFO/REF-Shooting-min.jpg
+- Poses de Caminhada/Corrida - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1482889142272-BPQL92JAP49USSXWD6WH/RefThumb-165.png
+- Cenários Internos (Layout) - https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1691798316449-1G3R3336ZJ0VLX34I06A/REF-Indoors-min.jpg
+
+
+==================================================
+ [6] https://blog.sakugabooru.com/
+==================================================
+LINK ORIGINAL: https://blog.sakugabooru.com/
+FONTE / AUTOR(ES):
+Blog Sakugabooru (Kevin Cirugeda / kViN e colaboradores).
+
+RESUMO:
+O site é uma autoridade em análise técnica de produção de anime, focando no "sakuga" (animação de alta qualidade). Ele detalha a filosofia de diretores, a cinematografia experimental e a transição entre estilos artísticos. Os destaques incluem a precisão cultural de "Jaadugar", o experimentalismo de vanguarda de Souta Ueno em "Shiboyugi", e a cinematografia "perturbadoramente neutra" de "Shoushimin", que utiliza enquadramentos para criar tensão psicológica.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS (olhos, cabelo, expressões, iluminação, cel shading, cor, model sheets):
+- Cinematografia e Enquadramento: Uso de composições que simulam neutralidade para esconder intenções sombrias dos personagens (Shoushimin). A técnica foca em "enshutsu" (direção de cena) para ditar o ritmo visual.
+- Experimentalismo Visual: Integração de influências do impressionismo francês e cinema de vanguarda no design de personagens e cenários para representar estados mentais psicológicos (Shiboyugi).
+- Fluidez de Estilos: Em produções longas, a mistura de estilos diferentes (outrageous comedy vs contemplative nostalgia) é tratada como uma virtude artística, variando a densidade de linhas e o detalhamento das sombras.
+- Pesquisa Cultural no Design: Para "Jaadugar", a estética foca em precisão histórica (Mongólia), exigindo vestimentas com texturas realistas e padrões étnicos complexos integrados ao cel shading tradicional.
+- Metodologia de Blockbuster: O estilo de "Chainsaw Man" representa o extremo da produção moderna, com foco em iluminação volumétrica pesada, profundidade de campo cinematográfica e animação baseada em frames-chave densos.
+
+TUTORIAL PASSO A PASSO:
+1. Para gerar imagens com "vanguarda psicológica": Adicione termos como "avant-garde film influence", "French impressionism textures" e "distorted perspective to represent mental state".
+2. Para "Cinematografia Neutra/Unnerving": Use prompts focados em enquadramento como "symmetrical wide shots", "excessive negative space", "neutral lighting" e "Hyouka-style clean aesthetics".
+3. Para "Precisão Histórica Detalhada": Especifique "cultural research accuracy", "intricate textile patterns" e "historical Mongol attire" com acabamento "studio quality cel shading".
+4. Para o estilo "Chainsaw Man/Reze": Utilize "cinematic movie production style", "volumetric lighting", "extreme lens flare" e "high-profile production methodology".
+
+IMAGENS RELEVANTES (até 12, formato: descrição - URL; só model sheets, paletas, iluminação, olhos/cabelo/expressões, settei):
+- Exemplo de composição de cena Jaadugar - https://blog.sakugabooru.com/wp-content/uploads/2026/09/shoukaku_bCR24s9ELX-1038x576.jpg
+- Arte conceitual e cenário histórico Jaadugar - https://blog.sakugabooru.com/wp-content/uploads/2026/08/jdgr-1038x576.jpg
+- Estilo visual experimental Shiboyugi - https://blog.sakugabooru.com/wp-content/uploads/2026/04/shibo1-1038x576.jpg
+- Design de personagens e cores Shiboyugi - https://blog.sakugabooru.com/wp-content/uploads/2026/03/sbyg-in1-1038x576.jpg
+- Composição cinematográfica Chainsaw Man Reze - https://blog.sakugabooru.com/wp-content/uploads/2026/01/chenso-1038x576.jpg
+- Mistura de tons e iluminação Apocalypse Hotel - https://blog.sakugabooru.com/wp-content/uploads/2026/01/apohotel-1038x576.jpg
+- Enquadramento e cinematografia Shoushimin - https://blog.sakugabooru.com/wp-content/uploads/2025/12/oomf-1038x576.jpg
+- Estilo de arte cru e dinâmico Hyakuemu - https://blog.sakugabooru.com/wp-content/uploads/2025/12/hyaku-1038x576.jpg
+- Atmosfera de terror e iluminação HikaNatsu - https://blog.sakugabooru.com/wp-content/uploads/2025/10/hikanatsooze-1038x576.jpg
+
+
+==================================================
+ [7] https://www.anime-colors.com/
+==================================================
+LINK ORIGINAL: https://www.anime-colors.com/
+FONTE / AUTOR(ES):
+Anime Colors (AnimeTones).
+
+RESUMO:
+O site Anime Colors é um repositório especializado em extrair e catalogar paletas de cores de personagens icônicos e cenários de animes populares. Ele serve como uma referência técnica fundamental para artistas digitais e modelos de IA que buscam replicar a estética visual e a harmonia cromática de estúdios específicos (como MAPPA, Ufotable, Pierrot e Studio Ghibli). O foco está em fornecer os códigos exatos usados em peles, cabelos, roupas e acessórios, garantindo fidelidade ao material original.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+A aplicação destas paletas em IA deve seguir o conceito de "Color Scripting" e "Cel Shading".
+- Equilíbrio de Tons: Animes de drama/romance (ex: My Happy Marriage) utilizam tons pastéis e dessaturados para peles e fundos.
+- Contraste Shonen: Séries como Naruto e Demon Slayer usam cores terrosas misturadas com cores de destaque vibrantes (acentos) para efeitos especiais e olhos.
+- Iluminação Ghibli: Utiliza paletas orgânicas com tons de cinza quentes e verdes naturais, evitando o preto puro para sombras, preferindo cores como #2C3231.
+- Renderização de Pele: A transição entre a cor base da pele (#F5D3B7) e a sombra deve ser feita com subtons ligeiramente mais avermelhados ou arroxeados para evitar um aspecto "sujo".
+
+TUTORIAL PASSO A PASSO:
+1. Escolha da Estética: Identifique se o estilo é "Soft/Pastel" (Kaya Saimori) ou "High Contrast/Vibrant" (Demon Slayer).
+2. Prompt de Base: Defina o personagem. Ex: "Digital anime art, character Roxy Migurdia style".
+3. Injeção de Cores: Utilize os códigos HEX nos parâmetros de prompt ou ajuste fino. Descreva as cores: "pale blue hair (#7383C1), creamy skin (#F5D3B7), dark brown eyes (#453132)".
+4. Controle de Sombras: Para sombras estilo "cel shading", use as cores mais escuras da paleta (ex: #2C2A2B) em camadas de multiplicação.
+5. Pós-processamento: Aplique a cor de destaque (accent color) para brilhos nos olhos ou efeitos de luz.
+
+CÓDIGOS HEX:
+- Kaya Saimori (Soft/Pink): #E0C8A1, #EC6295, #FFA7C6, #FFD790, #FDFBF5, #FEE4D3, #AD62BF.
+- Roxy Migurdia (Blue/Cool): #7383C1, #ECE1CE, #F0EDE6, #F5D3B7, #453132, #2C2A2B.
+- Tanjuro Kamado (Warm/Dark): #951A40, #632A3B, #292521, #BA5D2F, #F8E4CB.
+- Totoro (Earth/Nature): #736968, #B2A78A, #C9C0CB, #2C3231, #356537.
+- Shisui Uchiha (Neutral/Action): #932F29, #444740, #877051, #ECD2B7, #BFC0BB.
+
+IMAGENS RELEVANTES:
+- Paleta Kaya Saimori - https://www.anime-colors.com/wp-content/uploads/kaya-saimori.png
+- Paleta Roxy Migurdia - https://www.anime-colors.com/wp-content/uploads/roxy-migurdia.png
+- Paleta Xiaolan - https://www.anime-colors.com/wp-content/uploads/xiaolan.png
+- Paleta Susuwatari - https://www.anime-colors.com/wp-content/uploads/susuwatari.png
+- Paleta Yoshimura - https://www.anime-colors.com/wp-content/uploads/yoshimura.png
+- Paleta Yakumo Oomori - https://www.anime-colors.com/wp-content/uploads/yakumo-oomori.png
+- Paleta Tanjuro Kamado - https://www.anime-colors.com/wp-content/uploads/tanjuro-kamado.png
+- Paleta Totoro - https://www.anime-colors.com/wp-content/uploads/totoro.png
+- Paleta Tōshirō Hitsugaya - https://www.anime-colors.com/wp-content/uploads/toshiro-hitsugaya.png
+- Paleta Shisui Uchiha - https://www.anime-colors.com/wp-content/uploads/shisui-uchiha.png
+- Paleta Rokusuke Koenji - https://www.anime-colors.com/wp-content/uploads/rokusuke-koenji.png
+- Paleta Moro - https://www.anime-colors.com/wp-content/uploads/moro.png
+
+
+==================================================
+ [8] https://color.adobe.com/
+==================================================
+LINK ORIGINAL: https://color.adobe.com/
+FONTE / AUTOR(ES):
+Adobe Color / Adobe Express.
+
+RESUMO:
+A página é uma central de ferramentas de teoria das cores da Adobe, focada na criação de esquemas cromáticos harmônicos. Ela oferece geradores baseados em regras matemáticas (roda de cores), extração de paletas e gradientes a partir de imagens, verificadores de acessibilidade (contraste e daltonismo) e exploração de tendências visuais. Para geração de imagens de anime, o site serve como a fundação técnica para definir o "color script" e a atmosfera emocional da cena.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS (iluminação, cor, cel shading):
+O uso estratégico da roda de cores permite aplicar harmonias específicas no estilo anime:
+- Esquemas Complementares: Ideais para cenas de ação ou alto impacto, onde o personagem (ex: cabelos laranja) contrasta fortemente com o fundo (ex: céu azul profundo).
+- Esquemas Análogos: Perfeitos para iluminação de ambiente e "mood". Cores próximas na roda (ex: violeta, azul e ciano) criam sombras suaves e iluminação noturna coesa.
+- Cel Shading Profissional: A ferramenta de extração de gradientes ajuda a identificar a transição entre a "base color" (cor local), "shadow" (sombra) e "highlight" (brilho), garantindo que as cores da sombra não sejam apenas um cinza genérico, mas uma variação cromática rica.
+- Acessibilidade: O simulador de daltonismo garante que o design de personagens seja distinguível mesmo sem a percepção total de cores, focando no contraste de valor.
+
+TUTORIAL PASSO A PASSO:
+1. Defina o Humor: Escolha entre cores vibrantes (estúdio Ufotable) ou tons pastéis/desaturados (estúdio Kyoto Animation).
+2. Extração de Estilo: Carregue um "frame" de anime de alta qualidade na ferramenta "Extract Palette" para isolar as 5 cores principais usadas pelo estúdio original.
+3. Criação de Gradiente: Use a ferramenta "Extract Gradient" em uma imagem de pôr do sol de anime para obter a transição exata de cores para o sombreamento de pele ou céu.
+4. Verificação de Contraste: Antes de gerar a imagem final, use o "Contrast Checker" para garantir que elementos críticos (como o brilho dos olhos ou detalhes de roupas) se destaquem do fundo.
+5. Prompting: Utilize os nomes das cores ou códigos hexadecimais obtidos para descrever a paleta no prompt (ex: "cinematic lighting, color palette: [cor1], [cor2]").
+
+CÓDIGOS HEX (Exemplo de paleta clássica de Anime Summer/Céu):
+- Azul Céu: #4A90E2
+- Branco Nuvem: #F8F8F8
+- Sombra de Verão: #2C3E50
+- Destaque Solar (Highlight): #FFF2CC
+- Verde Grama: #7ED321
+
+IMAGENS RELEVANTES:
+Logotipo Adobe Express - https://color.adobe.com/express/code/icons/adobe-express-logo.svg
+Ícone da Roda de Cores - https://color.adobe.com/media_1fb4eae871dd751642ea25638d18f1117c48de293.png
+Exemplo de Verificador de Contraste - https://color.adobe.com/media_12ba9e5d49a6c9de7b856f08eea1bf21bfb90b4de.png
+Exemplo de Extração de Gradiente - https://color.adobe.com/media_12cde8313bd522f73c67fe001289d55d9f9c9a6a0.png
+Exemplo de Extração de Paleta - https://color.adobe.com/media_132af785ad2927bab6cc70869721fe17035722017.png
+
+
+==================================================
+ [9] https://coolors.co/
+==================================================
+LINK ORIGINAL: https://coolors.co/
+FONTE / AUTOR(ES):
+Coolors (Fabrizio Bianchi).
+
+RESUMO:
+Coolors é uma plataforma avançada de design focada em harmonia cromática. Para a geração de anime, o site funciona como um hub para extração de paletas de "settei" (folhas de modelo), verificação de contraste para legibilidade de legendas/UI e criação de gradientes para efeitos de iluminação e fundos. A ferramenta permite converter cores de imagens de referência em códigos HEX precisos, garantindo fidelidade visual a estilos específicos de estúdios.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Paletas de Personagem (Model Sheets): Use o "Image Picker" para extrair os tons exatos de pele, cabelo e vestimentas de referências de anime clássicas. Isso ajuda a manter a consistência cromática entre diferentes gerações de IA.
+- Cel Shading e Sombreamento: A ferramenta "Gradient Palette" permite criar transições suaves entre a cor base e a cor da sombra, essencial para definir tons de oclusão ambiental e luz direta.
+- Acessibilidade e Contraste: O "Contrast Checker" é vital para garantir que elementos de interface (como HUDs em animes de Mecha ou Sci-fi) e legendas sejam legíveis contra os fundos coloridos.
+- Teoria das Cores Aplicada: O gerador utiliza algoritmos para criar esquemas análogos (harmonia suave), complementares (confronto visual dinâmico comum em cenas de batalha) e triádicos.
+
+TUTORIAL PASSO A PASSO:
+1. Extração de Estilo: Vá em "Image Picker" e faça upload de um frame de um anime com a estética desejada (ex: Studio Ghibli para tons pastéis/naturais ou Ufotable para efeitos vibrantes).
+2. Refinamento: Selecione 5 pontos principais na imagem (Luz, Sombra, Meio-tom, Cor de Acento/Olhos e Background).
+3. Exportação para IA: Copie os códigos HEX gerados. Ao solicitar a imagem no ChatGPT/DALL-E, descreva: "Utilize uma paleta de cores baseada nos valores hexadecimais [CÓDIGOS HEX], com sombreamento cel shading nítido".
+4. Ajuste de Iluminação: Use o "Gradient Maker" para definir a cor da luz (ex: dourado #FFD700) e a cor da sombra profunda (ex: roxo noturno #2E0854) para criar profundidade atmosférica.
+
+CÓDIGOS HEX:
+Exemplo de paleta "Electric Royal" (descrita no site):
+#000F89 (Azul Royal Elétrico - para efeitos de energia/magia).
+
+IMAGENS RELEVANTES:
+- Logotipo e Interface do Gerador de Paletas - https://coolors.co/assets/img/homepage-much-more.svg
+- Visualização de Paleta em Design Real - https://coolors.co/visualizer
+- Exemplo de Cor do Dia (Electric Royal) - https://coolors.co/assets/img/color_day.svg
+
+
+==================================================
+ [10] https://colormind.io/
+==================================================
+LINK ORIGINAL: https://colormind.io/
+FONTE / AUTOR(ES):
+Colormind.io (Jack Qiao).
+
+RESUMO:
+O Colormind é um gerador de esquemas de cores baseado em Deep Learning que extrai paletas harmoniosas de filmes, fotografias e arte popular. Para o estilo anime, ele é essencial para definir o "Color Script" (humor cromático) de uma cena, garantindo que as cores dos personagens e dos cenários coexistam em harmonia visual, simulando a estética de produções de alto orçamento como Castlevania.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS (iluminação, cel shading, cor):
+A ferramenta aplica o conceito de "Deep Learning Color Harmony". Para gerar um visual de anime de estúdio, utiliza-se a lógica de cores complementares nas extremidades da paleta para criar tons intermediários suaves, ideais para gradientes de iluminação e sombras de transição. Cores contrastantes colocadas próximas na ferramenta forçam a IA a gerar esquemas triádicos, úteis para designs de personagens vibrantes (Shonen). O uso de paletas "High Contrast" com cores quentes (Lava/Flame) simula iluminação dinâmica de efeitos especiais (VFX), enquanto paletas saturadas em vermelhos e verdes, sem tons frios, replicam estéticas cinematográficas específicas.
+
+TUTORIAL PASSO A PASSO:
+1. Defina a cor base do personagem (ex: cor da pele ou cabelo) e insira-a em um slot, clicando no cadeado para travar.
+2. Para criar sombras de cel shading naturais, coloque a cor base e uma cor de luz em extremidades opostas; o sistema gerará os tons médios para as dobras da roupa.
+3. Se desejar um cenário atmosférico (ex: pôr do sol), trave um tom de laranja e um roxo profundo; use os valores intermediários gerados para a iluminação de borda (rim light) nos personagens.
+4. Experimente a função "Generate" para explorar variações de "Color Mood" baseadas em datasets de filmes e arte clássica.
+
+CÓDIGOS HEX (Exemplos de paletas do site):
+Paleta Padrão/Terra: #79824C, #756537, #8B5338, #410F0D, #F8F7F7.
+Cinzas de Escala de Controle: #333333, #555555, #777777, #999999, #BBBBBB.
+
+IMAGENS RELEVANTES:
+Lava and Flame (Cores quentes e alto contraste) - https://colormind.io/img/thumb_flame_photography.jpg
+Castlevania Style (Paleta gótica e tons terrosos) - https://colormind.io/img/thumb_castlevania.jpg
+Amélie Style (Esquema focado em vermelhos e verdes) - https://colormind.io/img/thumb_amelie_film.jpg
+Ocean/Sea Life (Tons frios e subaquáticos) - https://colormind.io/img/thumb_ocean_photography.jpg
+Tutorial: Harmonização por extremidades - https://colormind.io/img/tutorial3.png
+Tutorial: Esquemas triádicos e complexos - https://colormind.io/img/tutorial5.png
+
+
+==================================================
+ [11] https://colorpalettes.net/
+==================================================
+LINK ORIGINAL: https://colorpalettes.net/
+FONTE / AUTOR(ES):
+ColorPalettes.net
+
+RESUMO:
+O site é um repositório especializado em curadoria de esquemas de cores baseados em fotografias reais. Ele organiza paletas por temperatura (quente, fria, pastel), contraste e cores dominantes. Para geração de imagens de anime, o site serve como uma referência técnica para estabelecer atmosferas específicas (mood) e harmonizar as cores de personagens (model sheets) com os cenários (backgrounds), garantindo coesão visual de estúdio.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Atmosfera e Mood: A escolha de paletas "Cool" ou "Warm" define o horário do dia e o sentimento da cena em anime. Paletas frias com "dark blue-gray" e "medium gray-purple" são ideais para cenas noturnas ou melancólicas.
+- Cel Shading: Use as variações de tons da mesma cor (ex: "shades of olive green") para definir a cor base, a sombra (1st shadow) e a sombra profunda (2nd shadow) do sombreamento em camadas típico do estilo de estúdio.
+- Harmonia de Personagem: As paletas "Contrasting" ajudam a destacar o protagonista do fundo. Um personagem com detalhes "bright red" sobre um cenário de "medium gray-blue" cria foco visual imediato.
+- Model Sheets: Ao criar a ficha de um personagem, selecione uma paleta limitada de 5 cores para manter a consistência em diferentes ângulos de animação.
+
+TUTORIAL PASSO A PASSO:
+1. Defina o Tema: Escolha se a cena de anime será alegre (Pastel/Warm) ou dramática (Cool/Contrasting).
+2. Seleção de Paleta: Busque por tags específicas como "light gray-blue" para uniformes escolares ou "dark red-brown" para interiores de madeira clássicos.
+3. Distribuição de Pesos: Utilize a cor mais escura da paleta para as linhas e sombras profundas, e a cor mais clara para os brilhos de luz (highlights) no cabelo e olhos.
+4. Prompt de Cores: No ChatGPT/DALL-E, descreva a paleta explicitamente. Exemplo: "Cena de anime estilo Makoto Shinkai, usando uma paleta de cores de tons de verde oliva brilhante, cinza claro e marrom acinzentado médio".
+5. Consistência: Mantenha os mesmos códigos de cores ou descrições para objetos que aparecem em diferentes cenários para simular uma produção de série profissional.
+
+IMAGENS RELEVANTES:
+- Logo Color Palettes Mini - https://colorpalettes.net/wp-content/uploads/2025/08/logo-white-mini.png
+- Paleta 4816 (Verdes e Cinzas) - https://colorpalettes.net/wp-content/uploads/2025/12/color-palette-4816.png
+- Paleta 4815 (Verde Oliva e Violeta Claro) - https://colorpalettes.net/wp-content/uploads/2025/12/color-palette-4815.png
+- Paleta 4814 (Azul Escuro e Bege) - https://colorpalettes.net/wp-content/uploads/2025/12/color-palette-4814.png
+- Paleta 4813 (Verde Acinzentado e Azul Médio) - https://colorpalettes.net/wp-content/uploads/2025/12/color-palette-4813.png
+- Paleta 4812 (Roxo Acinzentado e Laranja) - https://colorpalettes.net/wp-content/uploads/2025/12/color-palette-4812.png
+- Paleta 4811 (Marrom Avermelhado e Pêssego) - https://colorpalettes.net/wp-content/uploads/2025/12/color-palette-4811.png
+- Paleta 4810 (Vermelho Brilhante e Azul Acinzentado) - https://colorpalettes.net/wp-content/uploads/2025/12/color-palette-4810.png
+- Paleta 4809 (Bege e Azul Claro) - https://colorpalettes.net/wp-content/uploads/2025/12/color-palette-4809.png
+
+
+==================================================
+ [12] https://www.clipstudio.net/how-to-draw/archives/165695
+==================================================
+LINK ORIGINAL: https://www.clipstudio.net/how-to-draw/archives/165695
+FONTE / AUTOR(ES):
+Clip Studio Paint (Art Rocket) / Eridey.
+
+RESUMO:
+Guia especializado em line art digital para anime, focando no uso da espessura da linha (weight) para expressar volume, luz, sombra e profundidade. O conteúdo ensina como transformar sketches em artes finais dinâmicas, utilizando ferramentas de estabilização e técnicas de variação de traço para definir diferentes materiais e atmosferas.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Olhos: Uso de cílios grossos para dar "peso" ao olhar. A técnica consiste em desenhar o contorno e preencher com a ferramenta Fill.
+- Cabelo: Linhas que fluem da raiz às pontas seguindo o movimento natural. Uso de fios soltos (strands) para realismo e pincel transparente para criar brilhos (highlights) que acompanham a curvatura da cabeça.
+- Linha e Volume: Linhas finas e imperfeitas sugerem fragilidade (bolhas), enquanto linhas grossas e acentuadas na base sugerem peso e solidez (bolas de boliche).
+- Luz e Sombra: Traços fortes em interseções criam sombra oclusiva. Linhas finas ou espaços abertos representam luz intensa.
+- Perspectiva: Contornos mais pesados e definidos trazem objetos para o primeiro plano; linhas finas ou difusas indicam distância ou elementos secundários.
+- Estabilização: Ajuste essencial para evitar tremores em linhas longas e fluidas.
+- Dinâmica de Traço: Linhas angulares transmitem agressividade/velocidade; linhas curvas e contínuas transmitem calma e delicadeza.
+
+TUTORIAL PASSO A PASSO:
+1. Preparação: Reduza a opacidade do sketch e crie uma nova camada. Comece por características centrais (como o nariz) se a mandíbula for difícil de definir inicialmente.
+2. Rosto: Desenhe o contorno dos olhos. Use o preenchimento (Fill) com "Area Scaling" acima de 0 para evitar pixels brancos nas bordas.
+3. Correção: Use a ferramenta Lasso + Ctrl+T para ajustar proporções (como olhos desiguais) sem precisar apagar.
+4. Cabelo: Desenhe o contorno total em uma camada separada. Use "Refer other layers" ao preencher para que o software reconheça o rosto abaixo. Adicione detalhes de brilho com o pincel no modo transparente.
+5. Roupas: Não tente fazer linhas longas de uma vez. Use pontos de descanso naturais onde as dobras se encontram. Rotacione o canvas para manter o movimento do pulso natural.
+6. Mãos: Se o sketch não estiver bom, redesenhe sobre a line art atual. Utilize "Layer Mask" para ocultar partes do cabelo que fiquem atrás da mão sem apagar os pixels permanentemente.
+7. Finalização: Adicione elementos dinâmicos (como um cachecol voando) para dar movimento à composição.
+
+IMAGENS RELEVANTES:
+- Expressão de luz e sombra na linha - https://www.clipstudio.net/wp-content/uploads/2021/05/0164_013.jpg
+- Técnica de preenchimento de cílios - https://www.clipstudio.net/wp-content/uploads/2021/05/0164_018.gif
+- Estabilização para curvas da íris - https://www.clipstudio.net/wp-content/uploads/2021/05/0164_023.gif
+- Fluxo e brilho do cabelo - https://www.clipstudio.net/wp-content/uploads/2021/05/0164_028.jpg
+- Comparação de linhas de tecidos e rochas - https://www.clipstudio.net/wp-content/uploads/2021/05/0164_012.jpg
+- Line art finalizada do personagem - https://www.clipstudio.net/wp-content/uploads/2021/05/0164_041.jpg
+- Uso de máscara de camada em mãos - https://www.clipstudio.net/wp-content/uploads/2021/05/0164_037_en-us.jpg
+- Variação de espessura de pincel - https://www.clipstudio.net/wp-content/uploads/2021/05/0164_002_en-us.png
+
+
+==================================================
+ [13] https://www.clipstudio.net/how-to-draw/archives/161517
+==================================================
+LINK ORIGINAL: https://www.clipstudio.net/how-to-draw/archives/161517
+FONTE / AUTOR(ES):
+Hyanna Natsu, via Clip Studio Art Rocket.
+
+RESUMO:
+Guia técnico focado na criação de cabelos de anime com qualidade profissional, abordando desde a estrutura inicial baseada no crânio até técnicas avançadas de renderização, transparência em franjas e integração cromática com o ambiente. O método enfatiza o uso de curvas em "S", variação de espessura de linha e efeitos de iluminação em camadas.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Curvas em S: Essenciais para dar leveza e fluidez, mesmo em cabelos lisos. Cabelos ondulados usam "Ss" mais fechados.
+- Volume e Crânio: O cabelo não é colado na cabeça; deve-se desenhar o círculo do crânio e adicionar volume acima dele a partir de um ponto de origem (raiz).
+- Line Art Dinâmica: Linhas mais grossas em intersecções ou áreas de sombra profunda criam dimensão. Evite traços curtos e "arranhados"; prefira linhas longas e fluidas.
+- Cel Shading Colorido: Sombras não devem ser apenas tons mais escuros, mas sim influenciadas pelo ambiente (ex: reflexos azuis ou vermelhos baseados no cenário ou roupas).
+- Efeito de Transparência: Aplicação leve de aerógrafo com a cor da pele na área da franja (bangs) para que os olhos e sobrancelhas fiquem levemente visíveis, criando profundidade.
+- Highlights (Brilhos): Formas geométricas (triângulos, círculos) em camadas "Add (Glow)". Adicionar fios soltos e bagunçados (messy strands) aumenta o realismo dinâmico.
+
+TUTORIAL PASSO A PASSO:
+1. Sketch Base: Desenhe o círculo do crânio e marque a linha das raízes. Defina a silhueta externa com formas grandes e simples.
+2. Definição de Mechas: Use curvas em "S". Para cachos, desenhe molas/espirais, defina a parte frontal, duplique e conecte as linhas traseiras.
+3. Line Art: Refine o esboço com traços longos. Engrosse as linhas onde as mechas se cruzam.
+4. Cores Base e Sombreamento: Defina a fonte de luz. Bloqueie as sombras com uma cor escura. Em áreas de contato com luz refletida, misture tons do ambiente.
+5. Detalhamento e Brilho: Use aerógrafo com tom de pele nas pontas da franja. Crie uma camada em modo "Add (Glow)" para os destaques de brilho.
+6. Finalização: Pinte a line art das sobrancelhas/cílios com um tom próximo ao do cabelo para que apareçam suavemente sob as mechas.
+
+IMAGENS RELEVANTES:
+- Tipos de cabelos femininos e masculinos (vibrações e personalidades) - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_001.png
+- Exemplos de cabelos curtos e estilos variados - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_002.png
+- Uso de curvas em S para fluidez - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_003.png
+- Técnica de construção de cachos em espiral - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_004.png
+- Limpeza de sketch e conexão de linhas - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_005.png
+- Variação de espessura na line art do cabelo - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_007.png
+- Blocagem de sombras baseada na fonte de luz - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_008.png
+- Influência da luz ambiente nas sombras do cabelo - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_010.png
+- Efeito de transparência na franja com tom de pele - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_011.png
+- Estilos e formas de highlights (brilhos) - https://www.clipstudio.net/wp-content/uploads/2020/06/0135_012_en-us.jpg
+
+
+==================================================
+ [14] https://www.animeoutline.com/
+==================================================
+LINK ORIGINAL: https://www.animeoutline.com/
+FONTE / AUTOR(ES):
+AnimeOutline (site especializado em tutoriais de desenho técnico para anime e manga).
+
+RESUMO:
+O AnimeOutline é uma biblioteca abrangente de guias passo a passo focada em proporções anatômicas, construção de personagens e objetos no estilo anime. Ele oferece instruções detalhadas sobre cel shading, iluminação, e diferenciação entre subgêneros (como chibi vs. semi-realista). O foco central é a construção geométrica básica que evolui para detalhes complexos, servindo como uma base de dados perfeita para definir "model sheets" e regras visuais de anatomia e acessórios.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Olhos: Foca em expressões variadas (frio, amoroso, assustado, feliz) e na transição do fechamento da pálpebra. Destaca o uso de brilhos internos e o formato da íris para definir a personalidade.
+- Cabelo: Divide o desenho em "frentes", "lados" e "topo". Ensina técnicas de sombreamento por mechas (clumping) e como desenhar cabelos molhados, ao vento ou penteados específicos (ponytails, hime cut, pigtails).
+- Iluminação e Cel Shading: Utiliza a técnica de sombras sólidas com bordas nítidas para definir volume. Explica a aplicação de sombras em rostos e roupas dependendo da fonte de luz (frontal, lateral, 3/4).
+- Model Sheets (Corpo): Diferencia proporções entre crianças, adolescentes e adultos musculosos. Foca na estrutura de "boneco de palito" ou formas básicas (círculos e ovais) antes da definição muscular.
+- Roupas e Tecidos: Detalha o comportamento de dobras em saias, meias, calças e uniformes escolares, enfatizando como o tecido se ajusta às articulações (joelhos e cotovelos).
+
+TUTORIAL PASSO A PASSO:
+1. Construção de Rosto: Comece com um círculo para o crânio. Adicione uma linha vertical central e linhas horizontais para posicionar olhos (geralmente no meio da cabeça), nariz e boca.
+2. Definição de Olhos: Desenhe a linha superior da pálpebra (mais grossa). Adicione a íris ovalada. Coloque brilhos circulares no topo e sombras na metade superior da íris.
+3. Cabelo: Desenhe o contorno da cabeça primeiro. Adicione o cabelo em "blocos" saindo de um ponto de origem (redemoinho). Não desenhe fios individuais; use formas pontiagudas.
+4. Cel Shading: Escolha a direção da luz. Desenhe formas fechadas onde a sombra incidirá e preencha com uma cor mais escura e saturada que a base.
+
+IMAGENS RELEVANTES:
+- Proporções de Rosto Feminino 3/4 - https://www.animeoutline.com/wp-content/uploads/2018/09/anime_female_face_3_4_view_drawing_tutorial.png
+- Estrutura de Corpo Masculino Musculoso - https://www.animeoutline.com/wp-content/uploads/2019/07/anime_muscular_body.png
+- Expressões de Boca e Dentes - https://www.animeoutline.com/wp-content/uploads/2013/02/anime_mouth_expressions.png
+- Guia de Sombreamento de Cabelo - https://www.animeoutline.com/wp-content/uploads/2020/03/anime_hair_shading.png
+- Tipos de Olhos Masculinos - https://www.animeoutline.com/wp-content/uploads/2018/09/anime_male_eye_styles.png
+- Proporções de Corpo Feminino Inteiro - https://www.animeoutline.com/wp-content/uploads/2013/01/anime_girl_full_body_drawing.png
+- Técnica de Cel Shading Realista em Olhos - https://www.animeoutline.com/wp-content/uploads/2026/09/big_realistic_eyes_drawing.png
+- Movimento de Cabelo ao Vento - https://www.animeoutline.com/wp-content/uploads/2019/02/anime_hair_blowing_in_wind.png
+- Estrutura de Mãos e Poses - https://www.animeoutline.com/wp-content/uploads/2019/07/anime_hand_poses_drawing.png
+- Guia de Roupas e Dobras (Saias) - https://www.animeoutline.com/wp-content/uploads/2020/05/anime_skirts_drawing.png
+- Proporções de Rosto Masculino - https://www.animeoutline.com/wp-content/uploads/2018/04/anime_boy_face.png
+- Diferentes Estilos de Destaque (Highlights) no Cabelo - https://www.animeoutline.com/wp-content/uploads/2018/11/anime_hair_highlight.png
+
+
+==================================================
+ [15] https://tips.clip-studio.com/
+==================================================
+LINK ORIGINAL: https://tips.clip-studio.com/
+FONTE / AUTOR(ES):
+Clip Studio Tips (Official Tutorials & Community). Autores variados: Leriisa, Wasabi, entre outros.
+
+RESUMO:
+A página é um hub de tutoriais para ilustração, animação e design de personagens em estilo anime e digital. Foca em otimização de workflow (preenchimento rápido de cores, lineart), técnicas de iluminação dramática, uso de figuras 3D para poses complexas e acabamento com filtros. É um repositório central para aprender o "look" de estúdio profissional, desde a anatomia até efeitos de pós-processamento.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Iluminação Dramática: Uso de luz de fundo (backlight) para silhuetas e profundidade, focando em como a luz contorna o personagem.
+- Preenchimento de Cor (Flatting): Métodos rápidos para preencher cores base (base painting) sem deixar espaços vazios, essencial para produção em larga escala.
+- Lineart: Técnicas de extração de linhas a partir de fotos ou desenhos e métodos para desenhar linhas perfeitas para iniciantes, com foco em espessura variável.
+- Anatomia e Gestos: Simplificação das mãos e gestos para facilitar o desenho dinâmico em anime.
+- Pós-processamento: Uso de filtros para finalizar a arte, simulando texturas de lápis reais ("fluffy look") ou efeitos de borda de aquarela (watercolor edge).
+- Model Sheets: Uso de figuras 3D integradas como referência de pose para manter a consistência anatômica em ângulos difíceis.
+
+TUTORIAL PASSO A PASSO (Design de Personagem & Cena):
+1. Pose Inicial: Utilize manequins 3D para estabelecer uma anatomia correta e poses dinâmicas.
+2. Lineart: Aplique traços limpos, variando a pressão para definir peso e profundidade (traços mais grossos em áreas de sombra).
+3. Base Colors: Use ferramentas de preenchimento (referência a outras camadas) para aplicar cores sólidas rapidamente.
+4. Shading: Aplique cel shading básico e, em seguida, adicione iluminação dramática (Backlight) em camadas de "Add Glow" ou "Screen".
+5. Efeitos de Borda: Adicione "Watercolor Edge" nas sombras para um toque artístico de estúdio.
+6. Finalização: Use filtros de ruído ou texturas de lápis digital para remover o aspecto "plástico" da pintura digital.
+
+IMAGENS RELEVANTES:
+- Ilustração de luz dramática e backlight - https://celcliptipsprod.s3-ap-northeast-1.amazonaws.com/tips_article_body/3eba/1618824/d2c718851f81313742835930f5e1119e_small
+- Tutorial de anatomia e gestos de mãos (Leriisa) - https://celcliptipsprod.s3-ap-northeast-1.amazonaws.com/tips_article_body/ccf1/724698/49b5081a470d5eb7b2f717093b8b5b53_small
+- Técnica de preenchimento rápido de cores base - https://celcliptipsprod.s3-ap-northeast-1.amazonaws.com/tips_article_body/ff5c/1586925/707870d9ac8526b18eaae144b1202f69_small
+- Efeito de lápis digital "fluffy look" - https://celcliptipsprod.s3-ap-northeast-1.amazonaws.com/tips_article_body/cb84/4458367/047f2d43a3604ddd0779242c5eb577e5_small
+- Uso de 3D para poses complexas - https://celcliptipsprod.s3-ap-northeast-1.amazonaws.com/tips_article_body/4f99/100484/84317929310a05c11a28fcbb62239ad9_en-us_small
+
+
+==================================================
+ [16] https://www.clipstudio.net/how-to-draw
+==================================================
+LINK ORIGINAL: https://www.clipstudio.net/how-to-draw
+FONTE / AUTOR(ES):
+Celsys / Art Rocket (Clip Studio Paint). Tutoriais por artistas como Laovaan, Sara Tepes, Dani Puente, Koast, Bluebiscuits e The Etherington Brothers.
+
+RESUMO:
+O portal Art Rocket oferece um hub abrangente de técnicas de ilustração digital e anime. O conteúdo foca em fundamentos de desenho (anatomia, mãos, orelhas), design de personagens (chibi, mermaids, dragões), técnicas de software (blending modes, fill tools) e fluxos de trabalho para webtoons e animação 2D. É uma referência essencial para entender a construção estrutural e a estilização de estética de estúdio.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Olhos: Foco em simplicidade estrutural para facilitar a expressividade e o desenho em diferentes ângulos.
+- Cabelo (Laovaan): Técnica de simplificação de mechas em massas maiores antes de detalhar fios individuais, essencial para fluidez no estilo anime.
+- Rosto Feminino (Sara Tepes): Aplicação de proporções faciais para estética delicada, focando em queixos afunilados e posicionamento de olhos em relação ao nariz e orelhas.
+- Iluminação (Bluebiscuits): Uso de camadas de ajuste e truques de brilho (glowing effects) para retratos mágicos e profundidade atmosférica.
+- Mãos (Etherington Bros): Foco em mãos finas e flexíveis ("supple hands"), usando formas geométricas simples para dedos longos e elegantes.
+- Anatomia: Estudo de músculos e croquis para garantir poses dinâmicas e naturais sob as roupas.
+- Efeitos e Cenários: Técnicas de pintura para explosões, florestas, grama e mechas (robôs).
+
+TUTORIAL PASSO A PASSO:
+1. Estrutura de Personagem: Comece com "Croquis" (esboços rápidos) para definir a linha de ação e pose.
+2. Anatomia Facial: Utilize guias para orelhas e olhos, ajustando conforme a idade/gênero (chibi vs. realista).
+3. Line Art: Extração e limpeza de linhas escaneadas ou criação digital limpa para coloração posterior.
+4. Pintura Digital: Utilize Ferramentas de Preenchimento (Fill) inteligentes e "Blending Modes" (Multiplicação para sombras, Adicionar/Sobrepor para luzes).
+5. Pós-processamento: Adicione efeitos de brilho (glow) e ajuste esquemas de cores para coesão visual.
+6. Finalização: Para Webtoons, utilize layouts de painéis verticais; para animação, defina keyframes seguindo fluxos de trabalho 2D.
+
+IMAGENS RELEVANTES:
+- Anime Hair Tutorial (Laovaan) - https://www.clipstudio.net/wp-content/uploads/2025/04/0218_000-475x237.jpg
+- Beginner's Guide to Female Face - https://www.clipstudio.net/wp-content/uploads/2025/06/0225_000-475x237.jpg
+- 5 Tips to Draw Eyes Easily - https://www.clipstudio.net/wp-content/uploads/2019/09/0024_000_en-us-475x237.jpg
+- Thin, Supple Hands - https://www.clipstudio.net/wp-content/uploads/2022/06/0192_000_en-us-475x237.jpg
+- Ultimate Guide to Drawing Ears - https://www.clipstudio.net/wp-content/uploads/2020/05/0109_000_en-us-475x237.jpg
+- Chibi Characters Creation - https://www.clipstudio.net/wp-content/uploads/2019/09/0026_001en-us-475x237.jpg
+- Simple Lighting Techniques - https://www.clipstudio.net/wp-content/uploads/2025/05/0219_000c-475x237.jpg
+- Folds and Drapery (Tecidos) - https://www.clipstudio.net/wp-content/uploads/2020/03/0086_000_en-us_2-475x237.jpg
+- Drawing Grass & Forests - https://www.clipstudio.net/wp-content/uploads/2022/06/0196_000_en-us-475x237.jpg
+- Glowing Effects (Magia) - https://www.clipstudio.net/wp-content/uploads/2020/10/0140_000_en-us-475x237.jpg
+- Mecha Design Breakdown - https://www.clipstudio.net/wp-content/uploads/2020/02/0079_000_en-us_3-475x237.jpg
+- Muscles of Human Body - https://www.clipstudio.net/wp-content/uploads/2020/10/0139_000_en-us-475x237.jpg
+
+
+==================================================
+ [17] https://www.pinterest.com/
+==================================================
+LINK ORIGINAL: https://www.pinterest.com/
+O Pinterest é uma plataforma visual de descoberta que funciona como um repositório infinito de referências de arte, design e ilustrações de anime. Para utilizá-lo como referência para IA, você deve pesquisar termos específicos como "Anime Settei" (folhas de configuração de personagem), "Anime Production Art" ou "Color Scripts" para encontrar materiais autênticos de estúdios.
+
+FONTE / AUTOR(ES):
+Pinterest (Plataforma agregadora de diversos artistas e estúdios de animação).
+
+RESUMO:
+A plataforma serve como um "moodboard" global. Para gerar imagens de nível de estúdio, é necessário extrair do Pinterest padrões de consistência visual, como o uso de Model Sheets (folhas de modelo) que definem proporções, e entender a aplicação de luz e sombra (cel shading) usada em grandes produções.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+OLHOS: Devem ser descritos com "multi-layered iris" e "sharp highlights". A estética de estúdio exige que a pupila e o brilho permaneçam consistentes em diferentes ângulos.
+CABELO: Utilize "defined strands" e "rim lighting". O cabelo não deve ser um bloco sólido, mas sim ter mechas principais com reflexos de luz em forma de arco (angel ring).
+CEL SHADING: A técnica de sombreamento deve ter bordas nítidas (hard edges). Use "2-tone shading" para sombras simples ou "3-tone shading" para produções de alto orçamento, onde há uma cor base, uma sombra e uma sombra profunda.
+MODEL SHEETS (SETTEI): São essenciais para ensinar a IA a manter o personagem igual de frente, perfil e costas. Descreva como "character reference sheet, turnaround, orthographic views".
+ILUMINAÇÃO: Aplique "volumetric lighting" ou "global illumination" para dar profundidade, simulando o efeito de filtros de pós-produção de estúdios como o MAPPA ou Ufotable.
+
+TUTORIAL PASSO A PASSO:
+1. Pesquise no Pinterest por "Anime Character Design Sheet" para entender a estrutura de um personagem.
+2. Identifique a paleta de cores dominante e o estilo de linha (lineart). Linhas finas e pretas são padrão; linhas coloridas sugerem um estilo mais suave.
+3. No prompt do ChatGPT/DALL-E, especifique o ângulo da câmera (ex: "low angle view") e a qualidade técnica (ex: "high-quality cel-shaded animation frame").
+4. Para a iluminação, peça "cinematic lighting, dramatic shadows, soft bloom".
+5. Use termos como "Studio Ghibli style" para texturas orgânicas ou "Modern Kyoto Animation style" para detalhes extremos em olhos e cabelos.
+
+IMAGENS RELEVANTES:
+Character Model Sheet (Turnaround) - https://www.pinterest.com/search/pins/?q=anime%20character%20model%20sheet
+Anime Expression Sheet - https://www.pinterest.com/search/pins/?q=anime%20expression%20sheet
+Color Palette Reference - https://www.pinterest.com/search/pins/?q=anime%20color%20palette
+Anime Lighting Reference - https://www.pinterest.com/search/pins/?q=anime%20cinematic%20lighting
+
+
+==================================================
+ [18] https://www.artstation.com/
+==================================================
+LINK ORIGINAL: https://www.artstation.com/
+FONTE / AUTOR(ES):
+ArtStation (Plataforma da Epic Games). Vários artistas, incluindo Frunz B, Steven Cormann, Anna Mihhailovskaja, Katie Cole-Willis e estúdios como Bungie e Ubisoft.
+
+RESUMO:
+O ArtStation é o principal hub global para artistas de entretenimento, cobrindo design de personagens, concept art ambiental, animação e modelagem 3D. A página apresenta "Art Blasts" (exibições de portfólio de grandes jogos como James Bond 007, Assassin's Creed Black Flag e Diablo IV) e canais especializados em estilos como Anime & Manga, Stylized, e Mecha. É a referência máxima para entender o padrão visual da indústria moderna.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Concept Art de Personagens: Foco em silhuetas legíveis e design funcional (model sheets).
+- Ambientes (Environmental Design): Uso de Unreal Engine para iluminação realista e composição de cenários expansivos (como em "Orium City").
+- Estilização (Stylized): Uso de hand-painted textures e proporções exageradas para estética "arcane-like".
+- Visual Development: Processo de criação de mundos, desde rascunhos iniciais até o render final.
+- Hard Surface e Mecha: Técnicas de modelagem para máquinas e armas com alta complexidade mecânica.
+- Cel Shading e Texturas: Aplicação de materiais via Substance Designer para simular superfícies estilizadas como "Ceramic Tiles" ou pedras de fantasia.
+
+TUTORIAL PASSO A PASSO (Para gerar imagens com qualidade de estúdio):
+1. Defina o Canal Estético: Escolha entre "Stylized" (estilizado/anime) ou "Realism".
+2. Estrutura de Produção: Solicite a visualização em formato "Art Blast" ou "Character Breakdown" para obter múltiplas visões do mesmo objeto.
+3. Iluminação de Produção: Use termos como "Cinematic Lighting", "Unreal Engine 5.8 Render", ou "Substance Designer Textures" para acabamento profissional.
+4. Nível de Detalhe: Para anime, especifique "Studio Quality Visual Development" e "Clean Lineart with Cel Shading".
+5. Filtros de Qualidade: Incorpore nomes de estúdios (Bungie, Ubisoft) para emular a fidelidade técnica vista nos "Art Blasts".
+
+IMAGENS RELEVANTES (Referência de Estilo e Categorias):
+- Anime & Manga Channel (Ícone de Estilo) - https://cdna.artstation.com/p/channels/covers/000/000/072/20200505105925/thumb/thumb.jpg?1588694365
+- Character Design Channel (Referência de Anatomia) - https://cdna.artstation.com/p/channels/covers/000/000/074/20200505132748/thumb/thumb.jpg?1588703268
+- Stylized Channel (Pintura Manual e Cores) - https://cdnb.artstation.com/p/channels/covers/000/000/119/20200505155012/thumb/thumb.jpg?1588711812
+- Mecha Channel (Design de Robôs) - https://cdna.artstation.com/p/channels/covers/000/000/092/20200505145646/thumb/thumb.jpg?1588708606
+- Lighting Channel (Esquemas de Luz) - https://cdna.artstation.com/p/channels/covers/000/000/090/20200505144911/thumb/thumb.jpg?1588708151
+- Storyboards Channel (Composição Narrativa) - https://cdna.artstation.com/p/channels/covers/000/000/096/20200722085432/thumb/thumb.jpg?1595426072
+- Environmental Concept Art (Cenários) - https://cdnb.artstation.com/p/channels/covers/000/000/081/20200505141625/thumb/thumb.jpg?1588706185
+
+
+==================================================
+ [19] https://www.deviantart.com/
+==================================================
+LINK ORIGINAL: https://www.deviantart.com/
+FONTE / AUTOR(ES):
+A página é a "Home" e seção "Explore" do DeviantArt, apresentando diversos artistas como AndrewSavaljero, Kattvinge, Shidei, mondegrise, YefyeF0087, velvetmuseai, e nes18939302.
+
+RESUMO:
+O DeviantArt é uma plataforma global de portfólios onde artistas compartilham artes digitais, fanarts, concept art e "adoptables" (designs de personagens para venda). O conteúdo abrange desde estilos tradicionais de anime (cel shading) até artes geradas por IA, pinturas digitais complexas, design de criaturas e personagens antropomórficos (furry/anthro). É a maior referência para encontrar modelos de personagens (settei) e designs originais.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- ADOPTABLES: São "model sheets" de personagens criados para venda. Geralmente apresentam o personagem em pose neutra, destacando roupas e acessórios únicos, úteis para treinar IAs em consistência de design.
+- ANIME STYLE (PRIMEIRA TENTATIVA): O estilo básico de anime foca em lineart limpa, olhos grandes com múltiplos brilhos internos e sombreamento simplificado (cel shading).
+- ANTHRO/FURRY DESIGN: Mistura de características humanas (anatomia bípede, roupas) com traços animais (asas de coruja, orelhas lupinas, olhos âmbar).
+- ILUMINAÇÃO FANTASIA: Uso de brilhos mágicos, partículas e tons dourados ou carmesim para destacar "protetores" ou seres místicos.
+- VELVETMUSEAI STYLE: Estilo de IA que utiliza texturas detalhadas em roupas (vestidos pretos góticos) contrastando com elementos fantásticos (asas brancas) e fundos arquitetônicos complexos (catedrais).
+
+TUTORIAL PASSO A PASSO:
+1. Para gerar um personagem estilo "Adoptable", use prompts que especifiquem "Full body, character sheet, front view, simple background".
+2. Para o efeito "Cel Shading" de anime clássico, adicione "flat color, sharp shadows, high contrast lineart".
+3. Para personagens temáticos (ex: Willow Schnee), defina a ambientação no prompt: "Character in a grocery store, cinematic lighting, modern attire".
+4. Use "concept art" no prompt para obter designs mais experimentais e menos genéricos.
+
+IMAGENS RELEVANTES:
+- Personagem feminina gótica com asas brancas e olhos âmbar - https://www.deviantart.com/velvetmuseai/art/Owl-Girl-Female-Anthro-in-Black-Dress%2C-White-Wings%2C-Amber-Eyes%2C-Gothic-Cathedral-Fantasy-1338914293
+- Model Sheet de personagem (Adoptable 48) - https://www.deviantart.com/galacticshop/art/Adoptable---%2848%29-1387654912
+- Exemplo de design de criatura (Jirwolves) - https://www.deviantart.com/lizifox/art/Jirwolves-%28Updated-Design%29-1387668813
+- Arte estilo anime clássico (mondegrise) - https://www.deviantart.com/mondegrise/art/my-first-attempt-in-anime-style-1380910601
+- Design de personagem "Crimson Protector" - https://www.deviantart.com/stevennaisha/art/CRIMSOM-PROTECTOR-1385006105
+
+
+==================================================
+ [20] https://www.behance.net/
+==================================================
+LINK ORIGINAL: https://www.behance.net/
+O Behance é uma plataforma global da Adobe voltada para a exibição de portfólios criativos. Para usá-lo como referência de anime, utilize a barra de busca com termos como "Anime Production", "Settei", "Model Sheets" ou "Cel Shading" e filtre por campos criativos como "Character Design" e "Illustration".
+
+FONTE / AUTOR(ES):
+Behance (Adobe). Criadores citados: Leo Teixeira (estudos de personagens), Allie Sullberg (ilustração), Muzixiii Studio (3D Motion), Morphine Motion Graphics.
+
+RESUMO:
+A página funciona como um agregador de tendências visuais de alta qualidade. Para a geração de imagens de anime, o site fornece referências cruciais de design de personagens (Character Design), modelagem 3D aplicada a animação, e técnicas de colorização avançadas. É uma fonte primária para observar a transição entre artes conceituais e o produto finalizado com qualidade de estúdio.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Character Design: O Behance destaca a importância de "Studies" (estudos), que mostram a silhueta, proporções e variações de um personagem antes da arte final.
+- 3D Motion & Visualization: Demonstra como integrar elementos 3D com estética 2D (estilo "cel shaded"), comum em animes modernos de alta produção.
+- Branding & Visual Identity: Ensina a criar coerência visual, útil para definir paletas de cores e "moodboards" para séries de imagens geradas por IA.
+- Retouching: Técnicas de pós-processamento no Photoshop para ajustar iluminação e contraste, elevando o aspecto de "desenho comum" para "cinematográfico".
+
+TUTORIAL PASSO A PASSO:
+1. Definição de Base: Comece pesquisando por "Character Sheet" no Behance para entender a estrutura de poses (frente, perfil, costas).
+2. Estilo de Linha: Observe projetos de "Illustration" para decidir entre linhas finas (clean lineart) ou pinceladas texturizadas.
+3. Iluminação: Busque por "CGI" ou "3D Art" para ver como a luz incide em superfícies complexas e tente descrever isso no prompt (ex: "cinematic rim lighting").
+4. Paleta: Use projetos de "Branding" para extrair esquemas de cores harmônicos e aplique os códigos hexadecimais ou nomes de cores no prompt.
+
+IMAGENS RELEVANTES:
+- Character Design Studies por Leo Teixeira - https://mir-s3-cdn-cf.behance.net/projects/404/3b1802255999569.Y3JvcCw2MzQsNDk2LDM1NywxOTE.png
+- Ilustrações Editoriais por Allie Sullberg - https://mir-s3-cdn-cf.behance.net/projects/404/bf8e21209792269.Y3JvcCwxNzQ1LDEzNjUsMTUxLDA.png
+- 3D Motion (Estilo Visualização) por Muzixiii Studio - https://mir-s3-cdn-cf.behance.net/projects/original/81323b252807875.Y3JvcCwxMzgwLDEwODAsMjA1LDA.png
+- Conceito de Mídia Digital (NFTimbre) por Gwen Keraval - https://mir-s3-cdn-cf.behance.net/projects/404/ef8ded251333757.Y3JvcCwxMDQ0LDgxNywxNDcsMA.jpg
+
+
+==================================================
+ [21] https://www.pixiv.net/
+==================================================
+LINK ORIGINAL: https://www.pixiv.net/
+O site pixiv é a maior rede social do mundo dedicada a artistas de anime, mangá e ilustrações, oferecendo uma vasta galeria de estilos que variam do profissional ao experimental. Use-o como referência visual para identificar tendências de iluminação, composição "laydown" e estilos de traço contemporâneos japoneses.
+
+FONTE: pixiv (pixiv.net)
+AUTOR(ES): Comunidade Global de Artistas (Ex: 紫昏たう / Shigure Tau)
+
+RESUMO:
+O pixiv serve como a biblioteca definitiva de estética anime moderna. O conteúdo abrange desde "Key Visuals" de alta fidelidade (estilo estúdio de animação) até ilustrações conceituais com uso dramático de luz e cor. Para o ChatGPT/DALL-E, o pixiv representa o padrão ouro de "digital art" e "fan art" refinada, onde a anatomia é estilizada, mas as texturas e efeitos atmosféricos são altamente detalhados.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+1. Iluminação Atmosférica (Rim Light): Foco em luzes de contorno que separam o personagem do fundo, técnica comum em artes populares no site.
+2. Composição Flat & Dynamic: Equilíbrio entre fundos minimalistas e poses dinâmicas com perspectiva forçada.
+3. Renderização de Cabelo: Uso de mechas finas, degradês de cores e brilhos especulares (highlights) em formato de halo.
+4. Cel Shading vs. Soft Shading: Mistura de sombras sólidas com transições suaves para dar profundidade sem perder a estética de desenho animado.
+
+TUTORIAL PASSO A PASSO (Para geração de imagens):
+1. Defina o Estilo de Traço: Use termos como "detailed lineart", "clean linework" ou "painterly style" para simular os artistas de elite da plataforma.
+2. Configure a Ambientação: Adicione "volumetric lighting", "lens flare" ou "chromatic aberration" para replicar o acabamento de pós-processamento digital comum no pixiv.
+3. Detalhamento de Personagem: Especifique "highly detailed eyes", "expressive facial features" e "intricate clothing textures".
+4. Qualidade de Estúdio: Adicione palavras-chave como "masterpiece", "trending on pixiv", "official art style" e "8k resolution".
+
+CÓDIGOS HEX:
+#FFFFFF (Branco Puro - Fundos Minimalistas)
+#2C2C2C (Cinza Escuro - UI e Contrastes)
+#0096FA (Azul Pixiv - Acentos de Interface)
+#FFD700 (Dourado - Efeitos de iluminação mágica comuns)
+
+IMAGENS RELEVANTES (descrição):
+- Logo do pixiv 2025 (Círculo azul estilizado com tipografia moderna).
+- Ilustração de capa por 紫昏たう (Exemplo de arte de alta fidelidade com personagens estilizados e iluminação suave).
+- Banner VISIONS 2026 (Exemplo de curadoria de arte conceitual e design de personagens futuristas).
+
+
+==================================================
+ [22] https://www.sakugabooru.com/
+==================================================
+LINK ORIGINAL: https://www.sakugabooru.com/
+O site Sakugabooru é um arquivo colaborativo focado em "sakuga" (animação de alta qualidade), catalogando cenas específicas por animador, estúdio e técnica cinematográfica. Ele serve como a maior referência visual para estudar movimento, efeitos de partículas, coreografia e estilos artísticos de animes.
+
+**RESUMO:**
+A plataforma funciona como um dicionário visual da animação japonesa. Para uma IA, ela fornece o vocabulário necessário para distinguir entre estilos de diferentes épocas, estúdios (como Ufotable vs. Shaft) e, principalmente, a "assinatura" visual de animadores individuais. É a fonte definitiva para descrever dinâmica de fluidos, impacto de combate e iluminação dramática.
+
+**TÉCNICAS E TEXTOS EXPLICATIVOS:**
+1. **Smear Frames:** Quadros distorcidos que simulam movimento rápido. Para a IA, use termos como "motion blur", "elongated limbs" e "kinetic lines".
+2. **Effects Animation (FX):** A forma como fogo, água e eletricidade são desenhados. Exemplos: "hand-drawn effects", "stylized fire", "liquid animation".
+3. **Background Art (Bishoujo/Scenery):** Foco em cenários detalhados. Use termos como "painterly backgrounds", "atmospheric perspective" e "detailed urban environment".
+4. **Character Acting:** Expressividade facial e linguagem corporal. Termos úteis: "expressive character acting", "subtle facial movements", "exaggerated squash and stretch".
+
+**TUTORIAL PASSO A PASSO (Para gerar imagens no estilo Sakuga):**
+1. **Defina o Estúdio/Era:** Comece o prompt com o estilo específico. Ex: "Studio MAPPA style" para realismo moderno ou "90s Retro Anime Style" para cel-shading clássico.
+2. **Incorpore Animadores Famosos:** Adicione nomes para influenciar o traço. "Inspired by Yutaka Nakamura" (cubos de impacto, ação dinâmica) ou "Shinya Ohira" (traços distorcidos e experimentais).
+3. **Descreva a Iluminação:** Use termos técnicos de composição como "rim lighting", "volumetric fog", "high contrast shadows" e "cinematic bokeh".
+4. **Efeitos de Renderização:** Adicione "high-end production value", "digital compositing", "particle effects" e "detailed lineart" para evitar o visual genérico de IA.
+
+**CÓDIGOS HEX (Paletas comuns em Sakuga moderno):**
+- `#1A1A1A` (Preto profundo para sombras de alto contraste)
+- `#FFD700` (Ouro vibrante para efeitos de energia/aura)
+- `#E6E6E6` (Cinza neutro para brilhos especulares)
+- `#4B0082` (Índigo para sombras atmosféricas e luz noturna)
+
+**IMAGENS RELEVANTES (Descrição visual para prompts):**
+1. **Impact Frames:** Telas em preto e branco de alto contraste que aparecem em milissegundos durante golpes.
+2. **Debris/Yutaka Poses:** Fragmentos geométricos (cubos) voando durante uma explosão ou impacto no solo.
+3. **Hair Animation:** Cabelos esvoaçantes com múltiplas camadas de sombra para indicar vento intenso.
+4. **Cinematic Close-up:** Foco extremo nos olhos com reflexos detalhados e linhas de expressão finas.
+
+
+==================================================
+ [23] https://www.youtube.com/
+==================================================
+LINK ORIGINAL: https://www.youtube.com/
+O site oferece acesso à maior plataforma de compartilhamento de vídeos do mundo, incluindo trailers de animes, speedpaints e tutoriais de animação. Utilize-o como referência pesquisando por "Anime Studio Process", "Sakuga Highlights" ou "Cel Shading Tutorials" para observar o movimento e a aplicação de luz em tempo real.
+
+
+==================================================
+ [24] https://www.animenewsnetwork.com/interview/2024-11-15/the-complicated-process-of-color-design-in-anime-an-with-nokotan-arisa-komatsu
+==================================================
+LINK ORIGINAL: https://www.animenewsnetwork.com/interview/2024-11-15/the-complicated-process-of-color-design-in-anime-an-with-nokotan-arisa-komatsu
+O site Anime News Network oferece uma entrevista detalhada com Arisa Komatsu sobre o papel fundamental do "Color Designer" na produção de animes modernos. Use como referência para entender como a paleta de cores define a atmosfera, as emoções dos personagens e a integração entre animação 2D e cenários.
+
+FONTE: Anime News Network
+AUTOR(ES): Arisa Komatsu (Entrevistada)
+
+RESUMO:
+A entrevista explora a função do Color Designer (Shikisai Kagami), responsável por definir a paleta cromática total de uma obra. O foco está no anime "My Deer Friend Nokotan", onde o desafio foi equilibrar cores vibrantes de comédia com a iluminação realista dos cenários. O processo envolve a criação de "Color Charts" para diferentes horários do dia e condições climáticas, garantindo consistência visual.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+1. Color Design vs. Color Setting: O Color Design define a estética global. O Color Setting aplica isso a cenas específicas, ajustando sombras e luzes conforme o ambiente.
+2. Integração com Backgrounds: As cores dos personagens não são isoladas; elas devem "conversar" com a arte do cenário (Art Board) para evitar que o personagem pareça recortado da cena.
+3. Hierarquia de Sombras: Uso de tons de "sombra 1" e "sombra 2" para dar profundidade, mantendo a legibilidade em estilos de traço simples.
+4. Efeito de Atmosfera: Aplicação de filtros de cor para transmitir sentimentos (ex: tons pastéis para nostalgia, cores saturadas para humor absurdo).
+
+TUTORIAL PASSO A PASSO PARA IA:
+1. Definição de Paleta Mestra: Inicie o prompt definindo uma paleta base (ex: "vibrant pop color palette").
+2. Iluminação Global: Especifique a fonte de luz e a hora do dia (ex: "golden hour lighting", "diffused daylight").
+3. Coerência de Sombras: Solicite sombras suaves com cores complementares à cor base, nunca preto puro (ex: "soft purple shadows on skin").
+4. Estilo de Arte: Para emular o trabalho de Komatsu, use "clean lineart, flat color style with subtle gradients, studio quality digital cel shading".
+
+CÓDIGOS HEX (Paleta Inspirada em Nokotan):
+- Marrom Chifre: #8B5A2B
+- Uniforme Bege: #F5F5DC
+- Rosa Cabelo (Nokotan): #FFC0CB
+- Azul Céu Satirizado: #00BFFF
+- Sombra de Pele (Dia): #FADADD
+
+IMAGENS RELEVANTES (descrição):
+- Gráfico de cores de personagens (Color Chart) mostrando variações de luz dia/noite.
+- Comparação entre o traço original (Genga) e a aplicação final de cores saturadas.
+- Exemplos de integração de personagens 2D em cenários pintados com cores harmônicas.
+
+
+==================================================
+ [25] https://www.animeherald.com/interview/interview-with-the-ancient-magus-bride-season-2-staff/
+==================================================
+LINK ORIGINAL: https://www.animeherald.com/interview/interview-with-the-ancient-magus-bride-season-2-staff/
+FONTE: Anime Herald
+
+AUTOR(ES): Seth Burn (Entrevistados: Koichi Naruse, Kazuaki Terasawa, Kohei Tokuoka)
+
+RESUMO:
+Entrevista com os líderes do Studio Kafka sobre a produção da 2ª temporada de *The Ancient Magus' Bride*. O foco recai sobre a criação do estúdio, a busca por uma estética de "drama estrangeiro" em animação e os desafios técnicos de manter a consistência visual em um arco com múltiplos personagens (Gakuin arc).
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+*   **Color Grading Estilo "Foreign Drama":** Diferente da "Pop Animation" (cores vibrantes e contrastadas), o estúdio utiliza uma paleta sutil e dessaturada. A técnica foca em criar ambiência e profundidade emocional, voltada para um público adulto, evitando variações cromáticas bruscas.
+*   **Consistência de Design (Gakuin Arc):** Com muitos animadores trabalhando em diferentes estilos, o diretor de animação foca em unificar as "facial features" (traços faciais) e expressões para garantir que todos os personagens pareçam pertencer ao mesmo universo visual, apesar da diversidade de interações.
+*   **Composição Atmosférica:** A iluminação e o background art são planejados para evocar realismo cinematográfico, priorizando o clima (ambiance) sobre a clareza excessiva de cores.
+
+TUTORIAL PASSO A PASSO (Para geração de imagens):
+1.  **Definição do Estilo:** Utilize prompts que evoquem "Cinematic Anime", "Seinen aesthetic" e "Ghibli-inspired maturity".
+2.  **Iluminação e Cor:** Evite "vivid colors". Use termos como "muted color palette", "subtle color grading", "low contrast ambiance" e "soft natural lighting".
+3.  **Foco em Detalhes Faciais:** Para emular o trabalho de Kohei Tokuoka, especifique "refined facial expressions", "detailed character design" e "consistent art style".
+4.  **Ambientação:** Inclua elementos de "background art" detalhados que reforcem a sensação de um drama, como "soft bokeh", "atmospheric haziness" e cenários que lembram bibliotecas ou colégios clássicos (referência ao arco Gakuin).
+
+CÓDIGOS HEX:
+*   Verde Musgo (Ambiência): #4A5D4E
+*   Sépia Suave (Pele/Papel): #D2B48C
+*   Cinza Atmosférico: #708090
+*   Borgonha Dessaturado (Liza/Estudantes): #63403A
+
+IMAGENS RELEVANTES (descrição):
+*   Equipe do Studio Kafka em mesa de conferência - https://www-animeherald-com.exactdn.com/wp-content/uploads/2023/08/The-Ancient-Magus-Bride-Interview-002-20230812.jpg
+*   Kazuaki Terasawa (Diretor) falando ao microfone - https://www-animeherald-com.exactdn.com/wp-content/uploads/2023/08/The-Ancient-Magus-Bride-Interview-001-20230812.jpg
+*   Close-up expressivo de membro da equipe técnica - https://www-animeherald-com.exactdn.com/wp-content/uploads/2023/08/The-Ancient-Magus-Bride-Interview-003-20230812.jpg
+
+
+==================================================
+ [26] https://archive.org/details/gggnk-1996-main-chara-settei
+==================================================
+LINK ORIGINAL: https://archive.org/details/gggnk-1996-main-chara-settei
+FONTE: Archive.org / Toei Animation
+AUTOR(ES): Toei Animation, Mizuki Pro
+
+RESUMO:
+Coleção completa de folhas de design de personagens (Settei) da série de anime *Gegege no Kitaro* (versão de 1996). O material inclui referências de modelagem de corpo inteiro, proporções de cabeça, expressões faciais, guias de sombreamento (shadow cast) e poses dinâmicas de ação para o elenco principal, focando no estilo visual distintivo da Toei dos anos 90.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+O estilo visual de 1996 combina o traço rústico original de Shigeru Mizuki com a limpeza da animação tradicional em celuloide.
+- **Lineart:** Traços firmes, com variação de espessura mínima, ideais para animação manual.
+- **Shadow Cast Sheets:** Folhas duplas que mostram o personagem com e sem sombras, ensinando a IA onde posicionar o sombreamento secundário (hatching ou blocos sólidos) para manter a volumetria.
+- **Character Proportions:** Uso de guias de escala para garantir a consistência entre personagens de tamanhos muito diferentes (ex: o gigante Nurikabe vs o pequeno Medama-Oyaji).
+- **Transformation Settei:** Referências específicas para a mudança de forma da Neko Musume (feições felinas).
+
+TUTORIAL PASSO A PASSO:
+1. **Estilo Base:** Use termos como "1990s anime style", "cel shading" e "settei production art".
+2. **Kitaro:** Defina como "boy with one eye covered by hair, striped yellow and black vest (chanchanko), wooden geta sandals".
+3. **Neko Musume:** Use "girl with purple bob cut, red dress, white blouse, ribbon, cat-like features when angry".
+4. **Nezumi Otoko:** "Anthropomorphic rat man, tattered mustard-yellow robe, whiskers, two buck teeth".
+5. **Composição:** Para replicar o arquivo, use "character model sheet, multiple views, turnaround, white background, technical sketches".
+
+CÓDIGOS HEX:
+- Amarelo Kitaro (Colete): #F2D024
+- Preto Kitaro (Colete): #1A1A1B
+- Azul Kitaro (Cabelo/Calças): #4A5D73
+- Vermelho Neko Musume (Vestido): #B22222
+- Roxo Neko Musume (Cabelo): #5D4A66
+- Bege Nezumi Otoko (Roupas): #C5B358
+
+IMAGENS RELEVANTES (descrição):
+- Referência de Cores Kitaro - https://archive.org/download/gggnk-1996-main-chara-settei/02%20Kitaro%20Color%20Ref.jpg
+- Proporções de Corpo Kitaro - https://archive.org/download/gggnk-1996-main-chara-settei/02%20Kitaro%20Proportions.jpg
+- Folha de Expressões Finais - https://archive.org/download/gggnk-1996-main-chara-settei/19%20Kitaro%20Expressions%20Final.jpg
+- Design Neko Musume - https://archive.org/download/gggnk-1996-main-chara-settei/38%20Neko%20Musume.jpg
+- Transformação Felina Neko Musume - https://archive.org/download/gggnk-1996-main-chara-settei/40%20Neko%20Musume%20Cat%20Transformation.jpg
+- Design Nezumi Otoko - https://archive.org/download/gggnk-1996-main-chara-settei/46%20Nezumi%20Otoko.jpg
+- Poses Dinâmicas de Fala - https://archive.org/download/gggnk-1996-main-chara-settei/31%20Kitaro%20Speaking%20Dynamic%20Poses.jpg
+
+
+==================================================
+ [27] https://archive.org/details/Astro-Boy-2003-Settei
+==================================================
+LINK ORIGINAL: https://archive.org/details/Astro-Boy-2003-Settei
+FONTE: Internet Archive (Astro Boy 2003 Main Character Settei Sheets)
+AUTOR(ES): Osamu Tezuka, Tezuka Productions.
+
+RESUMO:
+O link fornece uma coleção abrangente de "Settei" (folhas de design de produção) para o anime Astro Boy de 2003 (Tetsuwan Atom). Inclui modelos técnicos de personagens principais, referências de altura, expressões faciais, poses dinâmicas, detalhes anatômicos robóticos e vestimentas. É um recurso essencial para entender o traço moderno de estúdio que atualiza o estilo clássico de Osamu Tezuka com linhas limpas e proporções semi-realistas.
+
+TÉCNICAS E TEXTOS EXPLICATIVOS:
+- Settei Sheets: São guias de referência para animadores garantirem a consistência do desenho.
+- Line Art (Arte de Linha): Linhas pretas sólidas, de espessura constante, sem gradientes.
+- Proporção Chibi-Tech: Mistura elementos de "criança pequena" (cabeça grande, olhos expressivos) com mecânica funcional (foguetes nos pés, articulações visíveis).
+- Expressões: As folhas detalham variações emocionais extremas, mantendo a estrutura facial icônica.
+- Anatomia Robótica: Uso de cortes transversais para mostrar o "esqueleto" e o "coração" (núcleo de energia) sob a pele artificial.
+
+TUTORIAL PASSO A PASSO:
+1. Base do Personagem: Use círculos para a cabeça e formas geométricas simples para o tronco. O Astro Boy segue a regra de proporção de 3 a 4 cabeças de altura.
+2. Cabelo Icônico: O estilo de 2003 define as duas pontas do cabelo como formas sólidas e curvas, quase como chifres estilizados, que mantêm a forma em qualquer ângulo de perfil.
+3. Olhos: Desenhe olhos grandes e ovais com íris detalhadas, mas mantenha o brilho branco simples para um visual retrô-moderno.
+4. Detalhamento Mecânico: Para cenas de manutenção, use prompts como "robot internal skeleton", "mechanical heart" e "cross-section view".
+5. Vestimenta: O traje padrão consiste em calções pretos e botas vermelhas grandes (que funcionam como foguetes). Use "rocket boots" e "exhaust flames" para poses de voo.
+6. Finalização: Aplique cores sólidas (cel shading) com sombras mínimas e bordas nítidas para replicar a estética da Tezuka Pro.
+
+CÓDIGOS HEX:
+- Vermelho Bota: #E21D24
+- Pele (Artificial): #FFDBAC
+- Cabelo/Calções: #1A1A1B
+- Verde (Fundo Settei Típico): #C5D9B0
+
+IMAGENS RELEVANTES (descrição):
+- Referência de altura dos personagens (Astro, Uran, Ochanomizu) - https://archive.org/download/Astro-Boy-2003-Settei/01%20Height%20Reference.jpg
+- Detalhes das mãos e articulações - https://archive.org/download/Astro-Boy-2003-Settei/05%20Atom%20Hands.jpg
+- Folha de expressões faciais do Astro - https://archive.org/download/Astro-Boy-2003-Settei/11%20Atom%20Expressions.jpg
+- Estrutura do esqueleto robótico interno - https://archive.org/download/Astro-Boy-2003-Settei/23%20Atom%20Skeleton.jpg
+- Design dos propulsores nos pés - https://archive.org/download/Astro-Boy-2003-Settei/20%20Atom%20Rockets.jpg
+- Design da Uran (poses e expressões) - https://archive.org/download/Astro-Boy-2003-Settei/34%20Uran%20Poses%20%26%20Expressions.jpg
+
+
+COMO USAR ESTA BIBLIOTECA NO CHATGPT:
+  1. Cole este arquivo inteiro na conversa.
+  2. Peça: 'Use as técnicas da PARTE EXTRA (olhos, cabelo, cel shading,
+     paletas HEX e model sheets) para gerar/corrigir minha imagem'.

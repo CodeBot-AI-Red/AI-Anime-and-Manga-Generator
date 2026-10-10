@@ -15,6 +15,7 @@ from torch import nn
 from torch.nn import functional as functional
 
 from .config import ModelConfig
+from .vision_encoder import VisionEncoder
 
 
 class TimestepEmbedding(nn.Module):
@@ -51,7 +52,7 @@ class PromptEncoder(nn.Module):
             embedding_dim, heads, dim_feedforward=embedding_dim * 4,
             dropout=0.0, activation="gelu", batch_first=True, norm_first=True,
         )
-        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=layers)
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=layers, enable_nested_tensor=False)
         self.final_norm = nn.LayerNorm(embedding_dim)
 
     def tokenize(self, prompts: list[str], device: torch.device) -> torch.Tensor:
@@ -136,6 +137,8 @@ class DiffusionDenoiser(nn.Module):
         channels, condition_dim = config.base_channels, config.time_embedding_dim
         self.time_embedding = TimestepEmbedding(condition_dim)
         self.prompt_encoder = PromptEncoder(config.text_vocab_size, condition_dim, config.max_prompt_length, config.text_encoder_layers, config.attention_heads)
+        # Visão: tokens de imagens de referência (do usuário ou geradas antes).
+        self.vision_encoder = VisionEncoder(config) if config.vision_enabled else None
         self.condition = nn.Sequential(nn.Linear(condition_dim * 2, condition_dim), nn.SiLU(), nn.Linear(condition_dim, condition_dim))
         self.input = nn.Conv2d(config.image_channels, channels, 3, padding=1)
         self.down_blocks = nn.ModuleList([ResidualBlock(channels, channels, condition_dim) for _ in range(config.unet_res_blocks)])
@@ -158,13 +161,37 @@ class DiffusionDenoiser(nn.Module):
         *,
         drop_conditioning: bool = False,
         conditioning_mask: torch.Tensor | None = None,
+        reference_images: torch.Tensor | None = None,
+        negative_prompts: list[str] | None = None,
     ) -> torch.Tensor:
+        """Prediz o ruído.
+
+        ``reference_images``: (lote, R, C, H, W) em [0, 1] — imagens que o
+        modelo "vê" via encoder visual. ``negative_prompts`` substitui o
+        caminho incondicional quando ``drop_conditioning=True`` (CFG negativo).
+        """
         if noisy_images.ndim != 4 or noisy_images.shape[1] != self.config.image_channels:
             raise ValueError("Imagens devem ter a forma (lote, image_channels, altura, largura).")
         if noisy_images.shape[0] != len(prompts) or timesteps.shape != (noisy_images.shape[0],):
             raise ValueError("Imagem, timestep e prompt devem ter o mesmo tamanho de lote.")
-        prompt_tokens, token_valid = self.prompt_encoder.encode_tokens(prompts, noisy_images.device)
+        if drop_conditioning and negative_prompts is not None:
+            if len(negative_prompts) != len(prompts):
+                raise ValueError("negative_prompts deve ter o mesmo tamanho de lote dos prompts.")
+            # O prompt negativo vira o ramo "incondicional" da guidance.
+            prompt_tokens, token_valid = self.prompt_encoder.encode_tokens(negative_prompts, noisy_images.device)
+            drop_conditioning, reference_images = False, None
+        else:
+            prompt_tokens, token_valid = self.prompt_encoder.encode_tokens(prompts, noisy_images.device)
         prompt_embedding = (prompt_tokens * token_valid.unsqueeze(-1)).sum(dim=1) / token_valid.sum(dim=1, keepdim=True).clamp_min(1)
+        if reference_images is not None and not drop_conditioning:
+            if self.vision_encoder is None:
+                raise ValueError("vision_enabled=False: este modelo não aceita imagens de referência.")
+            if reference_images.shape[0] != noisy_images.shape[0]:
+                raise ValueError("reference_images deve ter o mesmo tamanho de lote das imagens.")
+            visual_tokens, visual_pooled = self.vision_encoder(reference_images.to(noisy_images.dtype))
+            prompt_tokens = torch.cat((prompt_tokens, visual_tokens), dim=1)
+            token_valid = torch.cat((token_valid, torch.ones(visual_tokens.shape[:2], dtype=torch.bool, device=token_valid.device)), dim=1)
+            prompt_embedding = prompt_embedding + visual_pooled
         if drop_conditioning:
             prompt_embedding = torch.zeros_like(prompt_embedding)
             prompt_tokens = torch.zeros_like(prompt_tokens)

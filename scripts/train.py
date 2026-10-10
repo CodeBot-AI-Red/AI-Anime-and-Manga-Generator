@@ -18,7 +18,10 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--images", type=Path, required=True, help="Diretório de imagens locais.")
     parser.add_argument("--annotations", type=Path, required=True, help="Diretório de JSON/TXT locais.")
-    parser.add_argument("--resolution", type=int, default=32)
+    parser.add_argument("--preset", choices=["large", "lite"], default="large", help="large = grande porte (padrão).")
+    parser.add_argument("--resolution", type=int, default=None, help="Padrão: 256 (large) ou 32 (lite).")
+    parser.add_argument("--learning-rate", type=float, default=1e-4)
+    parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda", "mps"])
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--checkpoint-dir", type=Path, default=Path("checkpoints"))
@@ -28,13 +31,17 @@ def main() -> None:
         print("Amostras ignoradas:\n" + "\n".join(errors))
     if len(samples) < 2:
         raise SystemExit("São necessárias ao menos duas imagens locais válidas para treino e validação.")
+    model_config = ModelConfig.large() if args.preset == "large" else ModelConfig.lite()
+    if args.resolution:
+        model_config = ModelConfig.from_dict({**model_config.__dict__, "image_resolution": (args.resolution, args.resolution)})
+    resolution = model_config.image_resolution[0]
     split = split_dataset(samples, validation_fraction=0.2)
-    processor = DatasetPreprocessor(PreprocessingConfig((args.resolution, args.resolution), args.batch_size))
+    processor = DatasetPreprocessor(PreprocessingConfig((resolution, resolution), args.batch_size))
     train_samples = [processor.process(sample) for sample in split.train]
     validation_source = split.validation or split.train[:1]
     validation_samples = [processor.process(sample) for sample in validation_source]
-    config = TrainingConfig(epochs=args.epochs, batch_size=args.batch_size, checkpoint_dir=args.checkpoint_dir, learning_rate=0.001, device="cpu")
-    model = DiffusionTrainingModel(ModelConfig(image_resolution=(args.resolution, args.resolution)), config.learning_rate, config.resolved_device, config.seed)
+    config = TrainingConfig(epochs=args.epochs, batch_size=args.batch_size, checkpoint_dir=args.checkpoint_dir, learning_rate=args.learning_rate, device=args.device)
+    model = DiffusionTrainingModel(model_config, config.learning_rate, config.resolved_device, config.seed)
     print(f"Parâmetros treináveis do denoiser: {count_trainable_parameters(model.denoiser):,}")
     trainer = Trainer(config, model)
     history = trainer.fit(ProcessedDataLoader(train_samples, args.batch_size, config.seed), ProcessedDataLoader(validation_samples, args.batch_size, config.seed))

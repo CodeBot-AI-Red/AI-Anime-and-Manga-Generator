@@ -40,7 +40,7 @@ class IterativeImageGenerator:
     """Executa um pequeno processo de refinamento latente a partir de um prompt."""
 
     def __init__(self, config: ModelConfig | None = None) -> None:
-        self.config = config or ModelConfig()
+        self.config = config or ModelConfig.lite()
         self.text_conditioner = TextConditioner(self.config)
         self.latent_representation = LatentRepresentation(self.config)
         self.model = SmallGenerativeModel(self.config)

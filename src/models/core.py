@@ -15,7 +15,7 @@ class AnimeMangaCore:
     """Reúne imagem, texto e cena em uma saída latente validada."""
 
     def __init__(self, config: ModelConfig | None = None) -> None:
-        self.config = config or ModelConfig()
+        self.config = config or ModelConfig.lite()
         self.image_encoder = ImageEncoder(self.config)
         self.text_conditioner = TextConditioner(self.config)
         self.scene_conditioner = SceneConditioner(self.config)

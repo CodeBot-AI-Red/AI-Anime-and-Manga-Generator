@@ -1,14 +1,21 @@
+# Perfil de grande porte (padrão). Use --preset lite para o perfil leve 32x32.
 image_channels: 3
-base_channels: 16
-latent_channels: 16
-text_embedding_dim: 12
+image_resolution: [256, 256]
+base_channels: 128
+unet_res_blocks: 3
 downsample_factor: 2
-image_resolution: [32, 32]
-generation_steps: 4
-num_timesteps: 100
-time_embedding_dim: 64
+num_timesteps: 1000
+generation_steps: 50
+time_embedding_dim: 768
+guidance_scale: 7.5
+condition_dropout: 0.1
 text_vocab_size: 256
-max_prompt_length: 128
-text_encoder_layers: 2
-attention_heads: 4
-unet_res_blocks: 2
+max_prompt_length: 512
+text_encoder_layers: 12
+attention_heads: 16
+vision_enabled: true
+vision_patch_size: 16
+vision_layers: 8
+vision_input_resolution: 224
+max_reference_images: 4
+reference_dropout: 0.5

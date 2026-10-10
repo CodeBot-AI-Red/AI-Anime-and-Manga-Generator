@@ -18,7 +18,7 @@ from src.models import (
 
 class ModelModuleTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.config = ModelConfig()
+        self.config = ModelConfig.lite()
 
     def test_individual_modules_return_expected_shapes(self) -> None:
         image_latents = ImageEncoder(self.config).forward(Tensor.zeros((2, 3, 8, 10)))
@@ -65,7 +65,7 @@ class ModelModuleTests(unittest.TestCase):
         self.assertNotEqual(output.values, latents.values)
 
     def test_iterative_generation_produces_an_image_from_prompt(self) -> None:
-        generator = IterativeImageGenerator(ModelConfig(image_resolution=(8, 6), generation_steps=3))
+        generator = IterativeImageGenerator(ModelConfig.lite(image_resolution=(8, 6), generation_steps=3))
         latents = generator.generate_latents(["garota anime sorrindo"])
         image = generator.generate("garota anime sorrindo")
         self.assertEqual(latents.shape, (1, 16, 3, 4))
