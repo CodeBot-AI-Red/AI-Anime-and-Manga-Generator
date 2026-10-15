@@ -1,6 +1,6 @@
 # ✨ AI Anime & Manga Generator
 
-> Gerador de imagens de anime e mangá por difusão, **local**, **treinado do zero**, agora em **grande porte**, com **visão** (vê as imagens que gera e as que você envia) e com as **regras de estúdio** dos guias *Criar* e *Atualizar Imagens de Anime* embutidas.
+> Gerador de imagens de anime e mangá por difusão, **local**, **treinado do zero**, **exclusivo para estilo de anime e mangá**, em **grande e ultra grande porte**, com **visualização de imagens no terminal/HTML**, **visão neural** e **regras de estúdio** embutidas.
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.2%2B-EE4C2C?logo=pytorch&logoColor=white)
@@ -28,11 +28,14 @@ Não há download de pesos, dataset, API externa ou telemetria. Você fornece im
 
 | Área | O que mudou |
 | --- | --- |
-| **Porte** | De 542 mil para **182,4 milhões** de parâmetros: 256×256, 128 canais base, 3 blocos residuais por estágio, embedding de 768, 16 cabeças de atenção. |
-| **Texto** | Encoder Transformer de **12 camadas**, prompts de até **512 bytes** (cabem as regras do estúdio inteiras). |
-| **Visão** | Novo **VisionEncoder** (ViT de 8 camadas, patches 16×16, entrada 224×224): até **4 imagens de referência** entram na atenção cruzada junto com o prompt. |
+| **Domínio Estrito** | Exclusivo para **Anime e Mangá**: validação e sanitização automática (`validate_manga_anime_domain`, `enforce_manga_anime_style`) que bloqueia/purifica termos fora do escopo. |
+| **Visualização** | **Visualizador de imagens integrado**: exibe artes diretamente no terminal via ANSI TrueColor de 24 bits (`--view`) e gera relatórios interativos em galeria HTML (`--html` ou `scripts/view_image.py`). |
+| **Porte e Presets** | Perfil padrão **large** (182M params, 256×256) e novo perfil **xlarge** (512×512, 16 camadas de visão). |
+| **Modo Mangá Screentone** | Opção `--manga` com acabamento monocromático de alta fidelidade e padrão de retículas (screentone halftone). |
+| **Texto** | Encoder Transformer de **12 a 16 camadas**, prompts de até **512 bytes** (cabem as regras do estúdio inteiras). |
+| **Visão Neural** | Novo **VisionEncoder** (ViT de 8-12 camadas, patches 16×16): até **4 imagens de referência** entram na atenção cruzada junto com o prompt. |
 | **Auto-revisão** | `StudioStyleCritic` analisa a imagem gerada (ou enviada) e o gerador **refaz automaticamente** o que estiver fora do padrão (img2img + prompt de correção). |
-| **Correção de imagens** | `--init-image` + `--strength` corrigem/refazem uma imagem sua. `scripts/inspect_image.py` diagnostica qualquer imagem. |
+| **Correção de imagens** | `--init-image` + `--strength` corrigem/refazem uma imagem sua. `scripts/inspect_image.py` e `scripts/view_image.py` diagnosticam qualquer imagem. |
 | **Prompt negativo** | Guidance com prompt negativo (padrão: lista de "defeitos de IA" dos guias). |
 | **Regras dos guias** | 7 pilares do look de estúdio, 5 paletas settei com hex reais, lineart RGB(61,43,40), acabamento de cel shading. |
 | **Dispositivo** | Treino em `cuda`/`mps` automático (`--device auto`). |
@@ -105,6 +108,16 @@ A IA "vê" imagens de duas formas complementares:
 2. **Visão analítica (`StudioStyleCritic`)** — mede na imagem os itens do checklist "Como identificar que a imagem parece feita por IA" e devolve pontuação, diagnóstico e o prompt de correção do guia.
 
 ```bash
+# Visualizar imagens diretamente no terminal e gerar relatório HTML
+python scripts/generate.py --checkpoint ck.pt --prompt "guerreira anime em uma cidade ao entardecer" \
+  --view --html relatorio.html
+
+# Gerar arte de mangá monocromático com retícula (screentone)
+python scripts/generate.py --checkpoint ck.pt --prompt "samurai em duelo" --palette manga_shonen --manga --view
+
+# Visualizador CLI dedicado para qualquer imagem
+python scripts/view_image.py minha_arte.png --reference ficha_aiko.png --cols 80 --html galeria.html
+
 # Usar imagens suas como referência (ficha de personagem, cena anterior)
 python scripts/generate.py --checkpoint ck.pt --prompt "mesma heroína correndo na chuva" \
   --reference ficha_aiko.png --reference cena_01.png

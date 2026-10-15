@@ -36,9 +36,8 @@ def load_images(paths: list[Path | str], size: tuple[int, int] | None = (224, 22
     return torch.stack(tensors)
 
 
-def save_png(image: torch.Tensor, path: Path | str) -> Path:
-    """Grava ``(3, H, W)`` em [0, 1] como PNG RGB sem Pillow."""
-    path = Path(path)
+def encode_png_bytes(image: torch.Tensor) -> bytes:
+    """Converte ``(3, H, W)`` em [0, 1] para bytes de formato PNG de 8 bits sem dependência do Pillow."""
     pixels = bytes(image.clamp(0, 1).mul(255).round().byte().permute(1, 2, 0).contiguous().flatten().tolist())
     height, width = image.shape[1:]
     raw = b"".join(b"\x00" + pixels[row * width * 3:(row + 1) * width * 3] for row in range(height))
@@ -46,9 +45,15 @@ def save_png(image: torch.Tensor, path: Path | str) -> Path:
     def chunk(kind: bytes, content: bytes) -> bytes:
         return struct.pack(">I", len(content)) + kind + content + struct.pack(">I", zlib.crc32(kind + content))
 
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(
+    return (
         b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
         + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b"")
     )
+
+
+def save_png(image: torch.Tensor, path: Path | str) -> Path:
+    """Grava ``(3, H, W)`` em [0, 1] como PNG RGB sem Pillow."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(encode_png_bytes(image))
     return path

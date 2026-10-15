@@ -62,6 +62,53 @@ class VisionTests(unittest.TestCase):
             loaded = DiffusionTrainingModel.from_checkpoint(path)
             self.assertEqual(loaded.config, self.config)
 
+    def test_domain_validation_and_enforcement(self) -> None:
+        from src.studio import build_prompt, enforce_manga_anime_style, validate_manga_anime_domain
+
+        valid, msg = validate_manga_anime_domain("guerreira anime em um castelo")
+        self.assertTrue(valid)
+
+        invalid, msg = validate_manga_anime_domain("a photorealistic 3d render of a real human person")
+        self.assertFalse(invalid)
+        self.assertIn("photorealistic", msg)
+
+        enforced = enforce_manga_anime_style("photorealistic photo of a warrior, 3d render")
+        self.assertNotIn("photorealistic", enforced.lower())
+        self.assertNotIn("3d render", enforced.lower())
+        self.assertIn("anime", build_prompt("guerreira").lower())
+
+    def test_terminal_visualization_and_html_gallery(self) -> None:
+        from src.studio import StudioStyleCritic, render_terminal_image, save_html_gallery
+
+        image = self.torch.rand(3, 32, 32)
+        rendered = render_terminal_image(image, max_cols=20)
+        self.assertIn("\033[38;2;", rendered)
+        self.assertIn("▀", rendered)
+
+        report = StudioStyleCritic().analyze(image)
+        with TemporaryDirectory() as folder:
+            html_file = Path(folder) / "view.html"
+            out_path = save_html_gallery(image, html_file, report, prompt="guerreira anime")
+            self.assertTrue(out_path.exists())
+            content = out_path.read_text(encoding="utf-8")
+            self.assertIn("Visualizador de Estúdio AI Anime & Manga", content)
+            self.assertIn("guerreira anime", content)
+
+    def test_manga_screentone_finish(self) -> None:
+        from src.studio import FinishConfig, apply_studio_finish
+
+        image = self.torch.rand(3, 32, 32)
+        manga_out = apply_studio_finish(image, FinishConfig(manga_mode=True, screentone=True))
+        self.assertEqual(manga_out.shape, (3, 32, 32))
+        self.assertTrue(self.torch.equal(manga_out[0], manga_out[1]))
+
+    def test_xlarge_model_config(self) -> None:
+        from src.models.config import ModelConfig
+
+        xlarge_cfg = ModelConfig.xlarge()
+        self.assertEqual(xlarge_cfg.image_resolution, (512, 512))
+        self.assertEqual(xlarge_cfg.generation_profile, "xlarge")
+
 
 if __name__ == "__main__":
     unittest.main()

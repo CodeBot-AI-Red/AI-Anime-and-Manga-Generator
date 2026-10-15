@@ -18,7 +18,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--images", type=Path, required=True, help="Diretório de imagens locais.")
     parser.add_argument("--annotations", type=Path, required=True, help="Diretório de JSON/TXT locais.")
-    parser.add_argument("--preset", choices=["large", "lite"], default="large", help="large = grande porte (padrão).")
+    parser.add_argument("--preset", choices=["large", "xlarge", "lite"], default="large", help="large = grande porte, xlarge = ultra grande porte (512x512).")
     parser.add_argument("--resolution", type=int, default=None, help="Padrão: 256 (large) ou 32 (lite).")
     parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda", "mps"])
@@ -31,7 +31,12 @@ def main() -> None:
         print("Amostras ignoradas:\n" + "\n".join(errors))
     if len(samples) < 2:
         raise SystemExit("São necessárias ao menos duas imagens locais válidas para treino e validação.")
-    model_config = ModelConfig.large() if args.preset == "large" else ModelConfig.lite()
+    if args.preset == "xlarge":
+        model_config = ModelConfig.xlarge()
+    elif args.preset == "large":
+        model_config = ModelConfig.large()
+    else:
+        model_config = ModelConfig.lite()
     if args.resolution:
         model_config = ModelConfig.from_dict({**model_config.__dict__, "image_resolution": (args.resolution, args.resolution)})
     resolution = model_config.image_resolution[0]
