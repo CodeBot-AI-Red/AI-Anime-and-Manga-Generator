@@ -62,6 +62,18 @@ class ModelConfig:
         return cls(**values)  # type: ignore[arg-type]
 
     @classmethod
+    def xxlarge(cls, **overrides: object) -> "ModelConfig":
+        """Perfil de estúdio supremo para grande porte: 1024×1024, 1.2B+ parâmetros de produção."""
+        values: dict[str, object] = dict(
+            image_resolution=(1024, 1024), base_channels=256, unet_res_blocks=4, num_timesteps=1000,
+            generation_steps=50, time_embedding_dim=1280, guidance_scale=9.0, max_prompt_length=512,
+            text_encoder_layers=16, attention_heads=16, vision_patch_size=16, vision_layers=16,
+            vision_input_resolution=384, generation_profile="xxlarge",
+        )
+        values.update(overrides)
+        return cls(**values)  # type: ignore[arg-type]
+
+    @classmethod
     def lite(cls, **overrides: object) -> "ModelConfig":
         """Perfil leve original (32×32) para CPU e testes."""
         values: dict[str, object] = dict(

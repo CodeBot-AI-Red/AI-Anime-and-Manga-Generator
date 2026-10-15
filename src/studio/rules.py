@@ -105,6 +105,14 @@ FORBIDDEN_DOMAIN_KEYWORDS: tuple[str, ...] = (
     "unreal engine",
     "octane render",
     "corporate vector",
+    "pixar",
+    "disney",
+    "western comic",
+    "dc comics",
+    "marvel comics",
+    "oil painting",
+    "claymation",
+    "photorealism",
 )
 
 ANIME_MANGA_DOMAIN_DIRECTIVE = "pure japanese anime and manga art style, official studio production illustration"
@@ -158,6 +166,18 @@ PALETTES.update({
         "pele": "#F8C8A0", "pele_sombra_1": "#C08070", "esclerotica": "#F0E8E0", "iris": "#306090",
         "cabelo": "#A02020", "cabelo_Hi": "#F08070", "linha": "#402820",
     }, "90s retro anime aesthetic, cel painted style, soft analog bloom, detailed hand-drawn lineart, iconic TV anime look"),
+    "cyberpunk_anime": Palette("Cyberpunk Anime", "Ghost in the Shell / Cyberpunk Edgerunners", {
+        "pele": "#E5D0C0", "pele_sombra_1": "#957080", "esclerotica": "#FFFFFF", "neon_cyan": "#00FFFF",
+        "neon_magenta": "#FF007F", "linha": "#2A2030",
+    }, "cyberpunk anime art style, glowing neon cyan and magenta reflections, dark futuristic city background, vivid anime cel shading"),
+    "fantasy_isekai": Palette("Fantasia Isekai", "Frieren / Sword Art Online", {
+        "pele": "#FFF0E0", "pele_sombra_1": "#E0B0A0", "esclerotica": "#FFFFFF", "magia_dourada": "#FFD700",
+        "cabelo_prata": "#E0E8F0", "linha": "#3A2825",
+    }, "isekai high fantasy anime palette, luminous magic particles, lush painterly landscape, delicate detailed character design"),
+    "slice_of_life": Palette("Slice of Life", "K-On! / Hyouka / Kyoto Animation", {
+        "pele": "#FFF5EC", "pele_sombra_1": "#F0C8B8", "esclerotica": "#FFFFFF", "luz_suave": "#FFE8A0",
+        "linha": "#4A3530",
+    }, "slice of life anime aesthetic, soft warm natural sunlight, expressive character eyes, high aesthetic detail, Kyoto Animation style"),
 })
 
 

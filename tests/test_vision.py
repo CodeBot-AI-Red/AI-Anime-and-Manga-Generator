@@ -68,14 +68,26 @@ class VisionTests(unittest.TestCase):
         valid, msg = validate_manga_anime_domain("guerreira anime em um castelo")
         self.assertTrue(valid)
 
-        invalid, msg = validate_manga_anime_domain("a photorealistic 3d render of a real human person")
+        invalid, msg = validate_manga_anime_domain("a photorealistic 3d render of a pixar real human person disney style")
         self.assertFalse(invalid)
         self.assertIn("photorealistic", msg)
 
-        enforced = enforce_manga_anime_style("photorealistic photo of a warrior, 3d render")
+        enforced = enforce_manga_anime_style("photorealistic photo of a warrior, disney style 3d render pixar western comic")
         self.assertNotIn("photorealistic", enforced.lower())
         self.assertNotIn("3d render", enforced.lower())
+        self.assertNotIn("pixar", enforced.lower())
+        self.assertNotIn("disney", enforced.lower())
         self.assertIn("anime", build_prompt("guerreira").lower())
+
+    def test_new_settei_palettes(self) -> None:
+        from src.studio import build_prompt, PALETTES
+
+        self.assertIn("cyberpunk_anime", PALETTES)
+        self.assertIn("fantasy_isekai", PALETTES)
+        self.assertIn("slice_of_life", PALETTES)
+
+        prompt = build_prompt("heroína", "cyberpunk_anime")
+        self.assertIn("cyberpunk anime art style", prompt)
 
     def test_terminal_visualization_and_html_gallery(self) -> None:
         from src.studio import StudioStyleCritic, render_terminal_image, save_html_gallery
@@ -108,6 +120,13 @@ class VisionTests(unittest.TestCase):
         xlarge_cfg = ModelConfig.xlarge()
         self.assertEqual(xlarge_cfg.image_resolution, (512, 512))
         self.assertEqual(xlarge_cfg.generation_profile, "xlarge")
+
+    def test_xxlarge_model_config(self) -> None:
+        from src.models.config import ModelConfig
+
+        xxlarge_cfg = ModelConfig.xxlarge()
+        self.assertEqual(xxlarge_cfg.image_resolution, (1024, 1024))
+        self.assertEqual(xxlarge_cfg.generation_profile, "xxlarge")
 
 
 if __name__ == "__main__":

@@ -36,7 +36,8 @@ def main() -> None:
     parser.add_argument("--negative-prompt", default=None, help="O que evitar, somado ao prompt negativo do estúdio.")
     parser.add_argument("--palette", choices=sorted(PALETTES), help="Ficha de cores (settei) do guia.")
     parser.add_argument("--checkpoint", type=Path, help="Checkpoint .pt; a arquitetura é lida dele.")
-    parser.add_argument("--preset", choices=["large", "xlarge", "lite"], default="large")
+    parser.add_argument("--preset", choices=["large", "xlarge", "xxlarge", "lite"], default="large")
+    parser.add_argument("--dynamic-thresholding", action="store_true", help="Aplica thresholding dinâmico para evitar saturação excessiva em alto CFG.")
     parser.add_argument("--manga", action="store_true", help="Ativa modo mangá monocromático com retículas (screentone).")
     parser.add_argument("--output", type=Path, default=Path("generated.png"))
     parser.add_argument("--resolution", type=int, default=None)
@@ -60,7 +61,9 @@ def main() -> None:
         model = DiffusionTrainingModel.from_checkpoint(args.checkpoint, device=args.device)
     else:
         overrides = {"image_resolution": (args.resolution, args.resolution)} if args.resolution else {}
-        if args.preset == "xlarge":
+        if args.preset == "xxlarge":
+            config = ModelConfig.xxlarge(**overrides)
+        elif args.preset == "xlarge":
             config = ModelConfig.xlarge(**overrides)
         elif args.preset == "large":
             config = ModelConfig.large(**overrides)
@@ -80,7 +83,8 @@ def main() -> None:
     reference_view = references[0, 0] if references is not None else None
 
     image = model.sample([prompt], args.steps, args.guidance_scale, negative_prompts=negatives,
-                         reference_images=references, init_images=init, strength=args.strength, generator=generator)[0]
+                         reference_images=references, init_images=init, strength=args.strength,
+                         dynamic_thresholding=args.dynamic_thresholding, generator=generator)[0]
     if not args.no_finish:
         from src.studio import FinishConfig
         finish_cfg = FinishConfig(manga_mode=args.manga or args.palette == "manga_monochrome")
@@ -97,7 +101,8 @@ def main() -> None:
         refs = seen if references is None else torch.cat((references, seen), dim=1)[:, -model.config.max_reference_images:]
         image = model.sample([f"{prompt}, {report.correction_prompt}"], args.steps, args.guidance_scale,
                              negative_prompts=negatives, reference_images=refs,
-                             init_images=image.unsqueeze(0), strength=0.35, generator=generator)[0]
+                             init_images=image.unsqueeze(0), strength=0.35,
+                             dynamic_thresholding=args.dynamic_thresholding, generator=generator)[0]
         if not args.no_finish:
             image = apply_studio_finish(image)
         report = critic.analyze(image, reference_view)
