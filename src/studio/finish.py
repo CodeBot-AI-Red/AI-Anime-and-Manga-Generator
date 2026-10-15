@@ -23,6 +23,8 @@ class FinishConfig:
     lineart_threshold: float = 0.2
     white_threshold: float = 0.86
     denoise: bool = True
+    manga_mode: bool = False       # Converte em arte de mangá preto e branco com retícula
+    screentone: bool = True        # Aplica padrão de retícula (halftone) em meio-tom
 
 
 def _luminance(image: torch.Tensor) -> torch.Tensor:
@@ -34,10 +36,45 @@ def _median3(image: torch.Tensor) -> torch.Tensor:
     return patches.view(image.shape[0], 9, *image.shape[1:]).median(dim=1).values
 
 
+def _apply_manga_screentone(luma: torch.Tensor, use_screentone: bool = True) -> torch.Tensor:
+    height, width = luma.shape
+    if not use_screentone:
+        # Binarização/quantização direta de página de mangá
+        manga = torch.ones_like(luma)
+        manga[luma < 0.35] = 0.0
+        manga[(luma >= 0.35) & (luma < 0.70)] = 0.5
+        return manga.repeat(3, 1, 1)
+
+    ys, xs = torch.meshgrid(
+        torch.arange(height, device=luma.device),
+        torch.arange(width, device=luma.device),
+        indexing="ij",
+    )
+    # Matriz de retícula (dot pattern halftone de 4x4)
+    dot_pattern = (((xs % 4 - 1.5).pow(2) + (ys % 4 - 1.5).pow(2)) / 4.5).clamp(0, 1)
+
+    manga_mono = torch.ones_like(luma)
+    midtone_mask = (luma >= 0.25) & (luma < 0.75)
+    # Quanto mais escuro o tom original, maior o ponto de retícula
+    tone_threshold = (luma - 0.25) / 0.50
+    manga_mono[midtone_mask] = (dot_pattern[midtone_mask] < tone_threshold[midtone_mask]).float() * 0.6 + 0.2
+    manga_mono[luma < 0.25] = 0.0
+    manga_mono[luma >= 0.75] = 1.0
+
+    return manga_mono.repeat(3, 1, 1)
+
+
 def apply_studio_finish(image: torch.Tensor, config: FinishConfig | None = None) -> torch.Tensor:
     """``image``: (3, H, W) em [0, 1] → imagem corrigida no mesmo formato."""
     config = config or FinishConfig()
     image = image.float().clamp(0, 1)
+
+    if config.manga_mode:
+        if config.denoise:
+            image = _median3(image)
+        luma = _luminance(image)
+        return _apply_manga_screentone(luma, config.screentone).clamp(0, 1)
+
     if config.denoise:
         image = _median3(image)
 

@@ -50,6 +50,18 @@ class ModelConfig:
         return cls(**overrides)  # type: ignore[arg-type]
 
     @classmethod
+    def xlarge(cls, **overrides: object) -> "ModelConfig":
+        """Perfil de ultra grande porte: 512×512, 16 cabeças de atenção, 12 camadas de visão."""
+        values: dict[str, object] = dict(
+            image_resolution=(512, 512), base_channels=192, unet_res_blocks=3, num_timesteps=1000,
+            generation_steps=50, time_embedding_dim=1024, guidance_scale=8.5, max_prompt_length=512,
+            text_encoder_layers=16, attention_heads=16, vision_patch_size=16, vision_layers=12,
+            vision_input_resolution=256, generation_profile="xlarge",
+        )
+        values.update(overrides)
+        return cls(**values)  # type: ignore[arg-type]
+
+    @classmethod
     def lite(cls, **overrides: object) -> "ModelConfig":
         """Perfil leve original (32×32) para CPU e testes."""
         values: dict[str, object] = dict(
