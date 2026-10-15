@@ -1,10 +1,10 @@
 # ✨ AI Anime & Manga Generator
 
-> Gerador local de imagens de anime e mangá por difusão, **treinado do zero** e **estritamente dedicado ao estilo anime/mangá**. Suporta perfis de **grande porte (182M)** e **ultra grande porte (440M)**, com **visualizador de imagens ANSI TrueColor no terminal**, **visão neural ViT**, **relatórios interativos em HTML** e **regras de estúdio de animação** integradas.
+> Gerador local de imagens de anime e mangá por difusão, **treinado do zero** e **estritamente dedicado ao estilo anime/mangá**. Suporta perfis de **grande porte (182M)**, **ultra grande porte (440M)** e **estúdio supremo (1.2B+)**, com **Flash Attention (`scaled_dot_product_attention`)**, **rastreamento EMA**, **precisão mista AMP**, **visualizador de imagens ANSI TrueColor no terminal**, **visão neural ViT**, **relatórios interativos em HTML** e **regras de estúdio de animação** integradas.
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.2%2B-EE4C2C?logo=pytorch&logoColor=white)
-![Params](https://img.shields.io/badge/par%C3%A2metros-656K%20%7C%20182M%20%7C%20440M-ff69b4)
+![Params](https://img.shields.io/badge/par%C3%A2metros-656K%20%7C%20182M%20%7C%20440M%20%7C%201.2B%2B-ff69b4)
 ![Domain](https://img.shields.io/badge/dom%C3%ADnio-Anime%20%26%20Mang%C3%A1-violet)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
 
@@ -15,6 +15,7 @@ Não utiliza pesos pré-treinados externos, APIs de terceiros ou coleta de dados
 > [!IMPORTANT]
 > - **Perfil Padrão:** O perfil padrão é **`large` (182,4 milhões de parâmetros, 256×256)**, recomendado para GPU.
 > - **Perfil Ultra:** O perfil **`xlarge` (439,9 milhões de parâmetros, 512×512)** é voltado para alta resolução e exige GPU com mais VRAM.
+> - **Perfil Supremo:** O perfil **`xxlarge` (1,2+ bilhão de parâmetros, 1024×1024)** é o estado da arte para gerações de estúdio em alta fidelidade.
 > - **Perfil Leve:** Para CPU, testes rápidos e desenvolvimento, utilize o perfil **`lite` (656 mil parâmetros, 32×32)**.
 > - *Sem um checkpoint treinado localmente, os pesos permanecem aleatórios e a amostragem gera ruído.*
 
@@ -44,7 +45,9 @@ Não utiliza pesos pré-treinados externos, APIs de terceiros ou coleta de dados
 | Recurso | Descrição |
 | --- | --- |
 | **Domínio Estrito Anime & Mangá** | Sanitização e validação automática de prompts (`validate_manga_anime_domain`, `enforce_manga_anime_style`), garantindo fidelidade técnica às estética japonesa tradicional. |
-| **Perfis Escalonáveis (`lite`, `large`, `xlarge`)** | Suporte nativo desde o perfil **`lite` (32×32, 656K params)** para testes de CPU, até **`large` (256×256, 182M params)** e **`xlarge` (512×512, 440M params)**. |
+| **Perfis Escalonáveis (`lite`, `large`, `xlarge`, `xxlarge`)** | Suporte nativo desde o perfil **`lite` (32×32, 656K params)** para testes de CPU, até **`large` (256×256, 182M params)**, **`xlarge` (512×512, 440M params)** e **`xxlarge` (1024×1024, 1.2B+ params)**. |
+| **Atenção Otimizada & Multi-Escala** | Utiliza `F.scaled_dot_product_attention` (Flash Attention) e atenção cruzada multinível nos blocos profundos da U-Net para alinhamento texto-imagem superior e economia de VRAM. |
+| **Rastreamento EMA & Precisão Mista (AMP)** | Suporte a Exponential Moving Average (EMA) para checkpoints de amostragem ultra suave e AMP (FP16/BF16) + acúmulo de gradientes para treinamento eficiente de modelos de grande porte. |
 | **Visualizador de Imagens no Terminal** | Exibe as artes geradas ou inspecionadas diretamente no terminal usando caracteres de bloco e cores **ANSI TrueColor 24-bit** (`--view` / `--show`). |
 | **Relatórios Interativos em HTML** | Gera galerias e relatórios visuais ricos em HTML (`--html`), permitindo comparar a imagem gerada, imagem de referência e os diagnósticos do crítico. |
 | **Modo Mangá / Screentone** | Opção `--manga` com conversão monocromática de alta fidelidade e padrão de retículas estilizadas (*halftone screentones*). |
@@ -225,7 +228,7 @@ Hiperparâmetros configuráveis da U-Net, encoders e difusão:
 | `vision_input_resolution` | `256` | `224` | `32` | Resolução de redimensionamento para imagens de referência |
 | `max_reference_images` | `4` | `4` | `4` | Máximo de imagens de referência injetadas por geração |
 | `reference_dropout` | `0.5` | `0.5` | `0.5` | Taxa de dropout de imagens de referência no treino |
-| `generation_profile` | `"xlarge"` | `"large"` | `"lite"` | Nome do perfil de geração utilizado |
+| `generation_profile` | `"xxlarge"` / `"xlarge"` | `"large"` | `"lite"` | Nome do perfil de geração utilizado |
 
 ---
 
@@ -239,7 +242,8 @@ Gera imagens, aplica acabamento de estúdio, executa auto-revisão e visualizaç
 | `--negative-prompt` | `None` | Elementos adicionais a evitar (combinados ao negativo de estúdio) |
 | `--palette` | `None` | Escolha de paleta settei: `fantasia`, `scifi`, `shonen`, `idol`, `dark`, `manga_monochrome` |
 | `--checkpoint` | `None` | Caminho para o arquivo `.pt` de checkpoint treinado |
-| `--preset` | `"large"` | Perfil do modelo se sem checkpoint: `large` (256x256), `xlarge` (512x512), `lite` (32x32) |
+| `--preset` | `"large"` | Perfil do modelo se sem checkpoint: `large` (256x256), `xlarge` (512x512), `xxlarge` (1024x1024), `lite` (32x32) |
+| `--dynamic-thresholding` | `False` | Aplica thresholding dinâmico para evitar saturação excessiva em altos valores de CFG |
 | `--manga` | `False` | Ativa o modo de acabamento mangá monocromático com retículas (screentone) |
 | `--output` | `generated.png` | Caminho do arquivo PNG de saída (gera também `.report.json`) |
 | `--resolution` | `None` | Sobrescreve a resolução de geração (largura/altura em pixels) |
@@ -268,7 +272,10 @@ Treina o denoiser a partir do dataset local de imagens e anotações:
 | --- | --- | --- |
 | `--images` | **Obrigatório** | Diretório contendo as imagens locais de treino |
 | `--annotations` | **Obrigatório** | Diretório contendo as anotações JSON ou TXT correspondentes |
-| `--preset` | `"large"` | Perfil da arquitetura a treinar: `large`, `xlarge` ou `lite` |
+| `--preset` | `"large"` | Perfil da arquitetura a treinar: `large`, `xlarge`, `xxlarge` ou `lite` |
+| `--gradient-accumulation-steps` | `1` | Passos de acúmulo de gradiente para economizar VRAM em modelos grandes |
+| `--mixed-precision` | `False` | Ativa precisão mista automática (AMP FP16/BF16) para acelerar o treino |
+| `--no-ema` | `False` | Desativa o rastreamento EMA dos pesos do modelo |
 | `--resolution` | `None` | Sobrescreve a resolução de treino (ex: `256` ou `512`) |
 | `--learning-rate` | `1e-4` | Taxa de aprendizado do otimizador AdamW |
 | `--device` | `"auto"` | Seleção de dispositivo (`auto` detecta CUDA -> MPS -> CPU) |

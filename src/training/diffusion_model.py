@@ -12,18 +12,59 @@ from src.models.diffusion import DiffusionDenoiser
 from src.models.scheduler import NoiseScheduler
 
 
+class EMAModel:
+    """Exponential Moving Average de pesos do modelo para amostragem suave de alta qualidade."""
+
+    def __init__(self, model: torch.nn.Module, decay: float = 0.9999) -> None:
+        self.decay = decay
+        self.shadow = {name: param.clone().detach() for name, param in model.named_parameters() if param.requires_grad}
+
+    def update(self, model: torch.nn.Module) -> None:
+        with torch.no_grad():
+            for name, param in model.named_parameters():
+                if param.requires_grad and name in self.shadow:
+                    self.shadow[name].sub_((1.0 - self.decay) * (self.shadow[name] - param.detach()))
+
+    def copy_to(self, model: torch.nn.Module) -> None:
+        with torch.no_grad():
+            for name, param in model.named_parameters():
+                if param.requires_grad and name in self.shadow:
+                    param.copy_(self.shadow[name])
+
+    def state_dict(self) -> dict[str, torch.Tensor]:
+        return self.shadow
+
+    def load_state_dict(self, state: dict[str, torch.Tensor]) -> None:
+        for name, tensor in state.items():
+            if name in self.shadow:
+                self.shadow[name].copy_(tensor)
+
+
 class DiffusionTrainingModel:
     """Uses existing processed batches to learn to predict added image noise."""
 
     is_diffusion_model = True
 
-    def __init__(self, model_config: ModelConfig | None = None, learning_rate: float = 1e-3, device: str = "cpu", seed: int = 42) -> None:
+    def __init__(
+        self,
+        model_config: ModelConfig | None = None,
+        learning_rate: float = 1e-3,
+        device: str = "cpu",
+        seed: int = 42,
+        use_ema: bool = True,
+        use_amp: bool = False,
+        gradient_accumulation_steps: int = 1,
+    ) -> None:
         self.config = model_config or ModelConfig()
         self.device = torch.device(device)
         torch.manual_seed(seed)
         self.denoiser = DiffusionDenoiser(self.config).to(self.device)
         self.scheduler = NoiseScheduler(self.config.num_timesteps, device=str(self.device))
         self.optimizer = torch.optim.AdamW(self.denoiser.parameters(), lr=learning_rate)
+        self.ema = EMAModel(self.denoiser) if use_ema else None
+        self.use_amp = use_amp
+        self.gradient_accumulation_steps = max(1, gradient_accumulation_steps)
+        self.accumulation_counter = 0
         self.seed = seed
 
     @staticmethod
@@ -58,11 +99,29 @@ class DiffusionTrainingModel:
 
     def train_step(self, batch: object) -> float:
         self.denoiser.train()
-        self.optimizer.zero_grad(set_to_none=True)
-        loss = self.loss_for_batch(batch)
+        self.accumulation_counter += 1
+        is_accumulating = (self.accumulation_counter % self.gradient_accumulation_steps) != 0
+
+        if self.accumulation_counter % self.gradient_accumulation_steps == 1 or self.gradient_accumulation_steps == 1:
+            self.optimizer.zero_grad(set_to_none=True)
+
+        device_type = self.device.type if self.device.type in ("cuda", "cpu") else "cpu"
+        if self.use_amp and self.device.type in ("cuda", "cpu"):
+            dtype = torch.float16 if self.device.type == "cuda" else torch.bfloat16
+            with torch.autocast(device_type=device_type, dtype=dtype):
+                loss = self.loss_for_batch(batch) / self.gradient_accumulation_steps
+        else:
+            loss = self.loss_for_batch(batch) / self.gradient_accumulation_steps
+
         loss.backward()
-        self.optimizer.step()
-        return float(loss.detach().cpu())
+
+        if not is_accumulating:
+            self.optimizer.step()
+            self.optimizer.zero_grad(set_to_none=True)
+            if self.ema is not None:
+                self.ema.update(self.denoiser)
+
+        return float((loss * self.gradient_accumulation_steps).detach().cpu())
 
     @torch.no_grad()
     def validate_batch(self, batch: object) -> float:
@@ -80,6 +139,7 @@ class DiffusionTrainingModel:
         reference_images: torch.Tensor | None = None,
         init_images: torch.Tensor | None = None,
         strength: float = 0.6,
+        dynamic_thresholding: bool = False,
         generator: torch.Generator | None = None,
     ) -> torch.Tensor:
         """Gera imagens em [0, 1].
@@ -120,6 +180,9 @@ class DiffusionTrainingModel:
             if scale:
                 unconditional_noise = self.denoiser(sample, times, prompts, drop_conditioning=True, negative_prompts=negative_prompts)
                 predicted_noise = unconditional_noise + scale * (conditional_noise - unconditional_noise)
+                if dynamic_thresholding and predicted_noise.abs().max() > 1.0:
+                    s = torch.quantile(predicted_noise.abs().flatten(1), 0.995, dim=1).clamp_min(1.0)
+                    predicted_noise = predicted_noise.clamp(-s[:, None, None, None], s[:, None, None, None])
             else:
                 predicted_noise = conditional_noise
             previous = int(indices[position + 1]) if position + 1 < len(indices) else -1
@@ -128,7 +191,16 @@ class DiffusionTrainingModel:
 
     def save_checkpoint(self, path: Path, epoch: int, metrics: dict[str, float]) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
-        torch.save({"epoch": epoch, "model": self.denoiser.state_dict(), "optimizer": self.optimizer.state_dict(), "metrics": metrics, "model_config": self.config.__dict__}, path)
+        data = {
+            "epoch": epoch,
+            "model": self.denoiser.state_dict(),
+            "optimizer": self.optimizer.state_dict(),
+            "metrics": metrics,
+            "model_config": self.config.__dict__,
+        }
+        if self.ema is not None:
+            data["ema"] = self.ema.state_dict()
+        torch.save(data, path)
         return path
 
     @classmethod
@@ -144,4 +216,6 @@ class DiffusionTrainingModel:
         self.denoiser.load_state_dict(checkpoint["model"])
         if "optimizer" in checkpoint:
             self.optimizer.load_state_dict(checkpoint["optimizer"])
+        if "ema" in checkpoint and self.ema is not None:
+            self.ema.load_state_dict(checkpoint["ema"])
         return int(checkpoint["epoch"])

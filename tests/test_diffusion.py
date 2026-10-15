@@ -63,3 +63,30 @@ class DiffusionTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             path = trained.save_checkpoint(Path(directory) / "model.pt", 1, {"train_loss": 1.0})
             self.assertEqual(DiffusionTrainingModel(self.config).load_checkpoint(path), 1)
+
+    def test_ema_and_dynamic_thresholding(self) -> None:
+        from src.models import Tensor
+        from src.training.data import TrainingBatch
+        from src.training.diffusion_model import DiffusionTrainingModel, EMAModel
+
+        trained = DiffusionTrainingModel(self.config, seed=1, use_ema=True)
+        self.assertIsNotNone(trained.ema)
+        batch = TrainingBatch(Tensor.zeros((2, 3, 32, 32)), Tensor.zeros((2, 3, 32, 32)), (object(), object()))
+        trained.train_step(batch)
+
+        sample_norm = trained.sample(["anime girl"], 2, guidance_scale=10.0, dynamic_thresholding=False)
+        sample_dt = trained.sample(["anime girl"], 2, guidance_scale=10.0, dynamic_thresholding=True)
+        self.assertEqual(sample_norm.shape, (1, 3, 32, 32))
+        self.assertEqual(sample_dt.shape, (1, 3, 32, 32))
+
+    def test_gradient_accumulation_and_mixed_precision(self) -> None:
+        from src.models import Tensor
+        from src.training.data import TrainingBatch
+        from src.training.diffusion_model import DiffusionTrainingModel
+
+        batch = TrainingBatch(Tensor.zeros((2, 3, 32, 32)), Tensor.zeros((2, 3, 32, 32)), (object(), object()))
+        trained = DiffusionTrainingModel(self.config, seed=1, use_amp=True, gradient_accumulation_steps=2)
+        loss1 = trained.train_step(batch)
+        loss2 = trained.train_step(batch)
+        self.assertGreaterEqual(loss1, 0)
+        self.assertGreaterEqual(loss2, 0)

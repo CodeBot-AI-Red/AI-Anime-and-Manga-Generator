@@ -119,9 +119,14 @@ class CrossAttention(nn.Module):
         query = self.query(spatial).view(batch, -1, self.heads, head_dim).transpose(1, 2)
         key = self.key(tokens).view(batch, -1, self.heads, head_dim).transpose(1, 2)
         value = self.value(tokens).view(batch, -1, self.heads, head_dim).transpose(1, 2)
-        weights = (query @ key.transpose(-1, -2)) * (head_dim ** -0.5)
-        weights = weights.masked_fill(~valid[:, None, None, :], torch.finfo(weights.dtype).min)
-        attended = (weights.softmax(dim=-1) @ value).transpose(1, 2).reshape(batch, height * width, channels)
+        if hasattr(functional, "scaled_dot_product_attention") and not torch.jit.is_scripting():
+            attn_mask = valid[:, None, None, :]  # (batch, 1, 1, seq_len)
+            attended = functional.scaled_dot_product_attention(query, key, value, attn_mask=attn_mask)
+            attended = attended.transpose(1, 2).reshape(batch, height * width, channels)
+        else:
+            weights = (query @ key.transpose(-1, -2)) * (head_dim ** -0.5)
+            weights = weights.masked_fill(~valid[:, None, None, :], torch.finfo(weights.dtype).min)
+            attended = (weights.softmax(dim=-1) @ value).transpose(1, 2).reshape(batch, height * width, channels)
         return inputs + self.output(attended).transpose(1, 2).reshape(batch, channels, height, width)
 
 
@@ -144,11 +149,13 @@ class DiffusionDenoiser(nn.Module):
         self.down_blocks = nn.ModuleList([ResidualBlock(channels, channels, condition_dim) for _ in range(config.unet_res_blocks)])
         self.downsample = nn.Conv2d(channels, channels * 2, 4, stride=2, padding=1)
         self.down_blocks_deep = nn.ModuleList([ResidualBlock(channels * 2, channels * 2, condition_dim) for _ in range(config.unet_res_blocks)])
+        self.down_cross_attn = CrossAttention(channels * 2, condition_dim, config.attention_heads)
         self.downsample_deep = nn.Conv2d(channels * 2, channels * 4, 4, stride=2, padding=1)
         self.middle = nn.ModuleList([ResidualBlock(channels * 4, channels * 4, condition_dim) for _ in range(config.unet_res_blocks)])
         self.cross_attention = CrossAttention(channels * 4, condition_dim, config.attention_heads)
         self.upsample_deep = nn.ConvTranspose2d(channels * 4, channels * 2, 4, stride=2, padding=1)
         self.up_blocks_deep = nn.ModuleList([ResidualBlock(channels * 4 if index == 0 else channels * 2, channels * 2, condition_dim) for index in range(config.unet_res_blocks)])
+        self.up_cross_attn = CrossAttention(channels * 2, condition_dim, config.attention_heads)
         self.upsample = nn.ConvTranspose2d(channels * 2, channels, 4, stride=2, padding=1)
         self.up_blocks = nn.ModuleList([ResidualBlock(channels * 2 if index == 0 else channels, channels, condition_dim) for index in range(config.unet_res_blocks)])
         self.output = nn.Sequential(nn.GroupNorm(min(8, channels), channels), nn.SiLU(), nn.Conv2d(channels, config.image_channels, 3, padding=1))
@@ -207,6 +214,7 @@ class DiffusionDenoiser(nn.Module):
         deep_skip = self.downsample(skip)
         for block in self.down_blocks_deep:
             deep_skip = block(deep_skip, condition)
+        deep_skip = self.down_cross_attn(deep_skip, prompt_tokens, token_valid)
         hidden = self.downsample_deep(deep_skip)
         for block in self.middle:
             hidden = block(hidden, condition)
@@ -217,6 +225,7 @@ class DiffusionDenoiser(nn.Module):
         hidden = torch.cat((hidden, deep_skip), dim=1)
         for block in self.up_blocks_deep:
             hidden = block(hidden, condition)
+        hidden = self.up_cross_attn(hidden, prompt_tokens, token_valid)
         hidden = self.upsample(hidden)
         if hidden.shape[-2:] != skip.shape[-2:]:
             hidden = functional.interpolate(hidden, size=skip.shape[-2:], mode="nearest")
