@@ -113,9 +113,22 @@ FORBIDDEN_DOMAIN_KEYWORDS: tuple[str, ...] = (
     "oil painting",
     "claymation",
     "photorealism",
+    "raytracing",
+    "volumetric render",
+    "fotorrealista",
+    "fotorrealismo",
+    "foto real",
+    "render 3d",
+    "estilo ocidental",
+    "western animation",
+    "american cartoon",
+    "sculpture",
+    "doll",
+    "action figure photo",
+    "cinematic photo",
 )
 
-ANIME_MANGA_DOMAIN_DIRECTIVE = "pure japanese anime and manga art style, official studio production illustration"
+ANIME_MANGA_DOMAIN_DIRECTIVE = "pure japanese anime and manga art style, official anime studio production illustration, authentic manga panels and settei character sheets"
 
 
 def validate_manga_anime_domain(prompt: str) -> tuple[bool, str]:
