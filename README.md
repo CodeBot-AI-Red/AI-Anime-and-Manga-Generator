@@ -1,126 +1,118 @@
-# ✨ AI Anime & Manga Generator
+# 🎨 AI Anime & Manga Generator (Grande Porte Estúdio)
 
-> Gerador local de imagens de anime e mangá por difusão, **treinado do zero** e **estritamente dedicado ao estilo anime/mangá**. Suporta perfis de **grande porte (183.5M)**, **ultra grande porte (442.1M)** e **estúdio supremo (1.43B+)**, com **Flash Attention (`scaled_dot_product_attention`)**, **rastreamento EMA**, **precisão mista AMP**, **visualizador de imagens ANSI TrueColor no terminal**, **visão neural ViT**, **relatórios interativos em HTML** e **regras de estúdio de animação** integradas.
+> **IA Geradora de Imagens de Alta Capacidade para Anime e Mangá**, treinada 100% do zero e **estritamente dedicada à estética visual japonesa (Anime & Mangá)**. Projetada para modelos de grande porte com até **1,43 Bilhão de Parâmetros**, oferecendo suporte a **Flash Attention**, **Precisão Mista (AMP FP16/BF16)**, **Rastreamento EMA**, **Vision Transformer (ViT)**, **Auto-revisão por Visão Neural**, **Retículas Halftone de Mangá** e **19 Paletas Industriais Settei**.
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.2%2B-EE4C2C?logo=pytorch&logoColor=white)
-![Params](https://img.shields.io/badge/par%C3%A2metros-669K%20%7C%20183.5M%20%7C%20442.1M%20%7C%201.43B%2B-ff69b4)
-![Domain](https://img.shields.io/badge/dom%C3%ADnio-Anime%20%26%20Mang%C3%A1-violet)
-![License](https://img.shields.io/badge/license-MIT-2ea44f)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.2%2B-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
+![Params](https://img.shields.io/badge/par%C3%A2metros-669K%20%7C%20183.5M%20%7C%20442.1M%20%7C%201.43B%2B-ff69b4?style=for-the-badge)
+![Domain](https://img.shields.io/badge/dom%C3%ADnio-Exclusivo%20Anime%20%26%20Mang%C3%A1-violet?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-2ea44f?style=for-the-badge)
 
 ---
 
-Não utiliza pesos pré-treinados externos, APIs de terceiros ou coleta de dados. Você fornece suas imagens e anotações **com direitos de uso**, treina 100% localmente e gera suas ilustrações e páginas de mangá de forma privada com fidedignidade técnica aos estilos japoneses de animação e quadrinhos.
+## 🌸 Sobre o Projeto
+
+Este repositório contém uma arquitetura de IA generativa de **grande e supremo porte**, desenvolvida para o domínio **exclusivo de ilustrações de anime e páginas de mangá**. O sistema não utiliza APIs externas, pesos pré-treinados ocidentais ou dados fotorrealistas. Todo o treinamento e geração ocorrem localmente com total controle sobre estilo, paletas de cores, *lineart* e regras de produção de estúdios japoneses (*settei*).
 
 > [!IMPORTANT]
-> - **Perfil Supremo (`xxlarge`):** **1.430.660.035 (~1,43 bilhão de parâmetros, 1024×1024)** — o estado da arte para gerações de estúdio em altíssima fidelidade e resolução profissional.
-> - **Perfil Ultra (`xlarge`):** **442.149.955 (~442,1 milhões de parâmetros, 512×512)** — voltado para alta resolução e nível estendido de detalhamento com GPU com mais VRAM.
-> - **Perfil Padrão (`large`):** **183.499.395 (~183,5 milhões de parâmetros, 256×256)** — perfil recomendado para uso diário em GPU.
-> - **Perfil Leve (`lite`):** **669.043 (~669 mil parâmetros, 32×32)** — ideal para testes rápidos em CPU, depuração e desenvolvimento local.
-> - *Sem um checkpoint treinado localmente, os pesos permanecem aleatórios e a amostragem gera ruído.*
+> ### 👑 Perfis de Capacidade do Modelo
+> - **Perfil Estúdio Supremo (`xxlarge`):** **1.430.660.035 (~1,43 Bilhão de Parâmetros, 1024×1024)** — Arquitetura de grande porte para ilustrações de alta fidelidade e riqueza de detalhes profissionais.
+> - **Perfil Ultra (`xlarge`):** **442.149.955 (~442,1 Milhões de Parâmetros, 512×512)** — Alta resolução balanceada para GPUs com VRAM elevada.
+> - **Perfil Padrão (`large`):** **183.499.395 (~183,5 Milhões de Parâmetros, 256×256)** — Recomendado para treino e amostragem diários em GPUs intermediárias.
+> - **Perfil Leve (`lite`):** **669.043 (~669 Mil Parâmetros, 32×32)** — Ideal para testes unitários, validação em CPU e depuração rápida.
 
 ---
 
 ## 📋 Índice
 
-- [Destaques e Funcionalidades](#-destaques-e-funcionalidades)
-- [Capacidade e Perfis do Modelo](#-capacidade-e-perfis-do-modelo)
-- [Início Rápido](#-início-rápido)
-- [Visão Neural e Crítico de Estúdio](#-visão-neural-e-crítico-de-estúdio)
-- [Regras de Estúdio Aplicadas](#-regras-de-estúdio-aplicadas)
-- [Guia Completo de Parâmetros](#-guia-completo-de-parâmetros)
-  - [Arquitetura (`ModelConfig`)](#1-configuração-da-arquitetura-modelconfig)
-  - [CLI de Geração (`scripts/generate.py`)](#2-cli-de-geração-scriptsgeneratepy)
-  - [CLI de Treinamento (`scripts/train.py`)](#3-cli-de-treinamento-scriptstrainpy)
-  - [CLIs de Inspeção e Visualização](#4-clis-de-inspeção-e-visualização)
-- [Arquitetura e Fluxo do Sistema](#-arquitetura-e-fluxo-do-sistema)
-- [Limitações](#-limitações)
-- [Testes e Verificação](#-testes-e-verificação)
-- [Licença](#-licença)
+- [✨ Destaques e Funcionalidades](#-destaques-e-funcionalidades)
+- [📊 Capacidade e Parâmetros Atualizados](#-capacidade-e-parâmetros-atualizados)
+- [⚡ Início Rápido](#-início-rápido)
+- [🎨 Regras de Estúdio e 19 Paletas Settei](#-regras-de-estúdio-e-19-paletas-settei)
+- [👁️ Visão Neural e Crítico de Estúdio](#-visão-neural-e-crítico-de-estúdio)
+- [⚙️ Guia Completo de Parâmetros e CLI](#️-guia-completo-de-parâmetros-e-cli)
+  - [1. Configuração da Arquitetura (`ModelConfig`)](#1-configuração-da-arquitetura-modelconfig)
+  - [2. CLI de Geração (`scripts/generate.py`)](#2-cli-de-geração-scriptsgeneratepy)
+  - [3. CLI de Treinamento (`scripts/train.py`)](#3-cli-de-treinamento-scriptstrainpy)
+  - [4. CLIs de Inspeção e Visualização](#4-clis-de-inspeção-e-visualização)
+- [🏗️ Arquitetura e Fluxo do Sistema](#️-arquitetura-e-fluxo-do-sistema)
+- [🧪 Testes e Verificação](#-testes-e-verificação)
+- [📜 Licença](#-licença)
 
 ---
 
-## 🚀 Destaques e Funcionalidades
+## ✨ Destaques e Funcionalidades
 
-| Recurso | Descrição |
+| Funcionalidade | Descrição |
 | --- | --- |
-| **Domínio Estrito Anime & Mangá** | Sanitização e validação automática de prompts (`validate_manga_anime_domain`, `enforce_manga_anime_style`), garantindo fidelidade técnica à estética japonesa tradicional e bloqueando contaminação por estilos fotorrealistas ou 3D ocidentais. |
-| **Perfis Escalonáveis de Grande Porte (`lite`, `large`, `xlarge`, `xxlarge`)** | Suporte nativo desde o perfil **`lite` (32×32, 669K params)** para testes em CPU até **`large` (256×256, 183.5M params)**, **`xlarge` (512×512, 442.1M params)** e **`xxlarge` (1024×1024, 1.43B+ params)**. |
-| **Atenção Otimizada & Multi-Escala** | Utiliza `F.scaled_dot_product_attention` (Flash Attention) e atenção cruzada multinível nos blocos profundos da U-Net para alinhamento texto-imagem superior e economia de VRAM. |
-| **Rastreamento EMA & Precisão Mista (AMP)** | Suporte a Exponential Moving Average (EMA) para checkpoints de amostragem ultra suave e AMP (FP16/BF16) + acúmulo de gradientes para treinamento eficiente de modelos de grande e supremo porte. |
-| **Visualizador de Imagens no Terminal** | Exibe as artes geradas ou inspecionadas diretamente no terminal usando caracteres de bloco e cores **ANSI TrueColor 24-bit** (`--view` / `--show`). |
-| **Relatórios Interativos em HTML** | Gera galerias e relatórios visuais ricos em HTML (`--html`), permitindo comparar a imagem gerada, imagem de referência e os diagnósticos do crítico. |
-| **Modo Mangá & Retículas Screentone** | Suporte a mangá monocromático com retículas estilo *halftone* (`--manga`), com paletas `manga_shonen`, `manga_shojo`, `manga_seinen`, `manga_monochrome` e `sumi_e_ink`. |
-| **Encoder de Texto Transformer** | Processa até **512 bytes** de prompt com **12 a 20 camadas Transformer**, suportando prompts ricos e regras de estúdio completas. |
-| **Visão Neural (`VisionEncoder`)** | Vision Transformer (**ViT de 8 a 20 camadas**, patches 16×16) que injeta até **4 imagens de referência** via atenção cruzada para manter consistência de personagem e estilo. |
-| **Auto-revisão / Autocorreção** | O `StudioStyleCritic` analisa a imagem gerada e, se a pontuação estiver abaixo da meta (`--target-score`), aciona rodadas automáticas de refinamento img2img (`--refine-rounds`). |
-| **Aprimoramento / Corregedoria (`img2img`)** | Permite refazer ou corrigir artes existentes com `--init-image` e controle de força (`--strength`). |
-| **Regras dos Guias Settei & 19 Paletas** | Incorpora os 7 pilares do visual de estúdio, 19 paletas *settei* pré-definidas com valores HEX reais, lineart em tom marrom quente RGB(61,43,40) e sombreamento *cel shading*. |
+| **Domínio Estrito Anime & Mangá** | Validação e sanitização automática de prompts (`validate_manga_anime_domain`, `enforce_manga_anime_style`), bloqueando contaminação por fotorrealismo, 3D ou estilos ocidentais. |
+| **Arquitetura de Grande Porte (Até 1.43B)** | Suporte nativo a 4 perfis escalonáveis: `lite` (32×32), `large` (256×256), `xlarge` (512×512) e `xxlarge` (1024×1024, 1.43B+ params). |
+| **Atenção Otimizada (Flash Attention)** | Implementação de `F.scaled_dot_product_attention` para processamento acelerado e menor consumo de VRAM em resoluções até 1024×1024. |
+| **Treinamento de Alta Eficiência** | Suporte a Precisão Mista (AMP FP16/BF16), Acúmulo de Gradientes e rastreamento Exponential Moving Average (EMA). |
+| **Modo Mangá & Retículas Screentone** | Renderização monocromática estilo mangá com padrões de retícula *halftone* (`--manga`) e paletas dedicadas (`manga_shonen`, `manga_shojo`, `manga_seinen`, `manga_monochrome`). |
+| **Encoder Visual ViT (`VisionEncoder`)** | Vision Transformer (8 a 20 camadas) para injeção de até 4 imagens de referência via atenção cruzada, garantindo consistência de personagens. |
+| **Autocorreção e Refinamento de Estúdio** | O `StudioStyleCritic` inspeciona a arte e, se a nota estiver abaixo da meta (`--target-score`), executa rodadas automáticas de refinamento img2img (`--refine-rounds`). |
+| **Terminal TrueColor & Relatórios HTML** | Exibição de imagens no terminal em ANSI TrueColor (`--view`) e exportação de galerias e laudos diagnósticos em HTML (`--html`). |
 
 ---
 
-## 📊 Capacidade e Perfis do Modelo
+## 📊 Capacidade e Parâmetros Atualizados
 
-A arquitetura e a contagem **exata** de parâmetros treináveis de cada perfil do modelo são detalhadas abaixo:
+Abaixo está a contagem **exata e atualizada** de parâmetros treináveis calculada diretamente na arquitetura PyTorch do projeto:
 
-### Contagem Exata de Parâmetros Treináveis por Componente
+### 🔬 Tabela de Parâmetros por Componente
 
-| Componente da Arquitetura | `xxlarge` (Estúdio, 1024×1024) | `xlarge` (Ultra, 512×512) | `large` (Padrão, 256×256) | `lite` (CPU / Teste, 32×32) |
+| Componente da U-Net / Encoders | `xxlarge` (1024×1024) | `xlarge` (512×512) | `large` (256×256) | `lite` (32×32) |
 | --- | ---: | ---: | ---: | ---: |
-| **Embedding temporal** (`time_embedding`) | 4.721.664 | 2.099.200 | 1.181.184 | 8.320 |
-| **Encoder de prompt** (`prompt_encoder`) | 567.813.120 | 202.328.064 | 85.645.824 | 124.672 |
-| **Encoder visual** (`vision_encoder`, ViT) | 568.708.608 | 152.212.480 | 57.450.240 | 113.856 |
-| **Fusão de condicionamento** (`condition`) | 7.080.960 | 3.147.776 | 1.771.008 | 12.416 |
-| **Projeções espaciais** (In/Down/Up Proj) | 32.779.840 | 11.803.584 | 5.247.616 | 82.512 |
-| **Blocos residuais da U-Net** (ResBlocks) | 236.751.680 | 65.628.864 | 29.834.368 | 297.360 |
-| **Atenção cruzada** (`cross_attention`) | 12.794.880 | 4.924.416 | 2.365.440 | 29.440 |
-| **Camada de saída** (`output`) | 9.283 | 5.571 | 3.715 | 467 |
-| **Total de Parâmetros Treináveis** | **1.430.660.035 (~1.43B)** | **442.149.955 (~442.1M)** | **183.499.395 (~183.5M)** | **669.043 (~669K)** |
+| **Embedding Temporal** (`time_embedding`) | 4.721.664 | 2.099.200 | 1.181.184 | 8.320 |
+| **Encoder de Prompt** (`prompt_encoder`) | 567.813.120 | 202.328.064 | 85.645.824 | 124.672 |
+| **Encoder Visual ViT** (`vision_encoder`) | 568.708.608 | 152.212.480 | 57.450.240 | 113.856 |
+| **Fusão de Condição** (`condition`) | 7.080.960 | 3.147.776 | 1.771.008 | 12.416 |
+| **Projeção de Entrada** (`input`) | 8.960 | 5.376 | 3.584 | 448 |
+| **Blocos Iniciais U-Net** (`down_blocks`) | 11.315,200 | 3.174.912 | 1.477.632 | 13.568 |
+| **Amostragem Down 1** (`downsample`) | 3.277.440 | 1.180.032 | 524.544 | 8.224 |
+| **Blocos Profundos U-Net** (`down_blocks_deep`) | 37.376.000 | 10.331.136 | 4.724.736 | 45.568 |
+| **Atenção Cruzada Down** (`down_cross_attn`) | 2.789.120 | 1.083.648 | 525.824 | 6.336 |
+| **Amostragem Down 2** (`downsample_deep`) | 13.108.480 | 4.719.360 | 2.097.664 | 32.832 |
+| **Bloco Central U-Net** (`middle`) | 133.734.400 | 36.587.520 | 16.527.360 | 164.864 |
+| **Atenção Cruzada Central** (`cross_attention`) | 7.216.640 | 2.757.120 | 1.313.792 | 16.768 |
+| **Amostragem Up 1** (`upsample_deep`) | 13.107.840 | 4.718.976 | 2.097.408 | 32.800 |
+| **Blocos de Subida** (`up_blocks_deep`) | 41.883.520 | 11.954.304 | 5.446.400 | 56.928 |
+| **Atenção Cruzada Up** (`up_cross_attn`) | 2.789.120 | 1.083.648 | 525.824 | 6.336 |
+| **Amostragem Up 2** (`upsample`) | 3.277.120 | 1.179.840 | 524.416 | 8.208 |
+| **Blocos Finais U-Net** (`up_blocks`) | 12.442.560 | 3.580.992 | 1.658.240 | 16.432 |
+| **Camada de Saída** (`output`) | 9.283 | 5.571 | 3.715 | 467 |
+| **TOTAL DE PARÂMETROS TREINÁVEIS** | **1.430.660.035 (~1.43B)** | **442.149.955 (~442.1M)** | **183.499.395 (~183.5M)** | **669.043 (~669K)** |
 
-Para medir a contagem de parâmetros de qualquer configuração personalizada via Python:
+Para checar os parâmetros em tempo de execução Python:
 
 ```python
 from src.models.config import ModelConfig
 from src.models.diffusion import DiffusionDenoiser, count_trainable_parameters
 
-config = ModelConfig.xxlarge()  # ou ModelConfig.large(), ModelConfig.xlarge(), ModelConfig.lite()
-denoiser = DiffusionDenoiser(config)
-print(f"Parâmetros treináveis: {count_trainable_parameters(denoiser):,}")
+config = ModelConfig.xxlarge()
+model = DiffusionDenoiser(config)
+print(f"Parâmetros do modelo supremo: {count_trainable_parameters(model):,}")
 ```
 
 ---
 
 ## ⚡ Início Rápido
 
-### 1. Instalação do Ambiente
+### 1. Instalação e Ambiente
 
 ```bash
-git clone <URL-DO-SEU-REPOSITORIO> && cd AI-Anime-and-Manga-Generator
+git clone <URL-DO-REPOSITORIO>
+cd AI-Anime-and-Manga-Generator
 python -m venv .venv
 source .venv/bin/activate        # No Windows: .venv\Scripts\activate
 pip install -r requirements.txt  # Instala PyTorch 2.2+
 ```
 
-### 2. Estrutura do Dataset Local
-
-Organize suas imagens locais e anotações (arquivos `.json` ou `.txt` com mesmo nome base):
-
-```text
-data/
-├── raw/
-│   ├── chapter-01/
-│   │   ├── page-001.png
-│   │   └── page-002.png
-└── annotations/
-    └── chapter-01/
-        ├── page-001.json
-        └── page-002.json
-```
-
-### 3. Treinar o Modelo
+### 2. Treinar o Modelo Localmente
 
 ```bash
-# Treinamento com o perfil supremo (xxlarge, 1024x1024, 1.43B params, GPU)
+# Treino do Perfil Supremo (xxlarge, 1024x1024, 1.43B params, GPU)
 python scripts/train.py \
   --images data/raw \
   --annotations data/annotations \
@@ -129,237 +121,160 @@ python scripts/train.py \
   --batch-size 4 \
   --gradient-accumulation-steps 2 \
   --mixed-precision \
-  --learning-rate 1e-4 \
-  --device auto
+  --learning-rate 1e-4
 
-# Treinamento com o perfil padrão (large, 256x256, GPU)
+# Treino no Perfil Padrão (large, 256x256)
 python scripts/train.py --images data/raw --annotations data/annotations --preset large
-
-# Para testes rápidos em CPU
-python scripts/train.py --images data/raw --annotations data/annotations --preset lite
 ```
 
-### 4. Gerar Imagens
+### 3. Gerar Ilustrações e Páginas de Mangá
 
 ```bash
-# Geração no perfil supremo (1024x1024) com checkpoint
+# Geração no perfil supremo (1024x1024) com visualização no terminal
 python scripts/generate.py \
   --checkpoint checkpoints/epoch-100.pt \
   --prompt "guerreira de cabelo vermelho em uma cidade ao entardecer" \
   --palette fantasia \
-  --output saida/cena01.png \
+  --output saida/ilustracao.png \
   --view
 
-# Geração em estilo mangá monocromático com retículas (screentone)
+# Geração de Mangá Monocromático com Retículas (screentone)
 python scripts/generate.py \
   --checkpoint checkpoints/epoch-100.pt \
-  --prompt "samurai em duelo sob chuva" \
+  --prompt "samurai em duelo sob chuva intensa" \
   --palette manga_shonen \
-  --manga --view
-```
-
----
-
-## 👁️ Visão Neural e Crítico de Estúdio
-
-O modelo integra duas abordagens complementares de visão:
-
-1. **Visão Neural (`VisionEncoder`)**: Um Vision Transformer (ViT de 8 a 20 camadas) treinado do zero extrai vetores de características de até 4 imagens de referência enviadas pelo usuário ou geradas anteriormente. Esses vetores são injetados na U-Net por atenção cruzada, garantindo consistência visual de personagens e cenários.
-2. **Crítico de Estúdio (`StudioStyleCritic`)**: Avalia a qualidade da imagem gerada medindo características de cel shading, ruído em superfícies chapadas, cor de lineart marrom quente, contraste, saturação e composição (regra dos terços).
-
-```bash
-# Visualizar a imagem no terminal e gerar relatório HTML
-python scripts/generate.py --checkpoint ck.pt \
-  --prompt "heroína anime em cena de ação" \
-  --preset xxlarge \
-  --view --cols 70 --html relatorio.html
-
-# Usar imagem de referência (ex: ficha de personagem / settei)
-python scripts/generate.py --checkpoint ck.pt \
-  --prompt "mesma heroína sorrindo no festival" \
-  --reference ficha_aiko.png --view
-
-# Aprimorar/Refazer uma arte sua (img2img)
-python scripts/generate.py --checkpoint ck.pt \
-  --prompt "retrato anime, iluminação dramática" \
-  --init-image meu_esboco.png --strength 0.5 --view
-
-# Apenas inspecionar uma imagem existente
-python scripts/inspect_image.py minha_arte.png --reference ficha_aiko.png --view --html analise.html
+  --manga \
+  --view
 ```
 
 ---
 
 ## 🎨 Regras de Estúdio e 19 Paletas Settei
 
-Implementadas no módulo `src/studio/`, com base em folhas de modelo (*settei*) e diretrizes de colorização industrial de anime:
+O módulo `src/studio/` incorpora as diretrizes de colorização e traço dos principais estúdios de animação e editoras de mangá:
 
-| Regra de Estúdio | Aplicação no Sistema |
+| Regra de Produção | Aplicação no Sistema |
 | --- | --- |
-| **Olhos em Camadas** | Esclerótica branca pura, pupila escura, íris com gradiente de cor e 2 destaques de luz (*catchlights*). Aplicado via prompt, checagens do crítico e acabamento. |
-| **Lineart Quente RGB(61,43,40)** | Linhas contornadas nunca em preto absoluto `(0,0,0)`, mas sim em tom marrom escuro quente. Corrigido automaticamente no acabamento. |
-| **Cel Shading Limpo** | Sombreamento em blocos com bordas nítidas quantizadas em 3 níveis (Destaque/Normal/Sombra). |
-| **Pele Chapada de Anime** | Eliminação de texturas de poros ou granulados fotográficos em áreas de pele através de suavização direcionada. |
-| **Realce de Saturação** | Elevação automática de +20% a +25% na saturação de cores para um visual vibrante típico de estúdio. |
-| **19 Paletas Settei Selecionáveis** | Fichas de cores via `--palette`: `fantasia`, `scifi`, `shonen`, `idol`, `dark`, `manga_shonen`, `manga_shojo`, `manga_seinen`, `manga_monochrome`, `anime_modern`, `anime_retro_90s`, `cyberpunk_anime`, `fantasy_isekai`, `slice_of_life`, `chibi_cute`, `mecha_classic`, `gothic_loli`, `sumi_e_ink`, `kyoto_animation`. |
+| **Olhos em Camadas** | Esclerótica branca pura, pupila com profundidade, íris em gradiente e múltiplos destaques de luz (*catchlights*). |
+| **Lineart Quente RGB(61,43,40)** | Linhas contornadas em tom marrom escuro quente, evitando a rigidez do preto puro `(0,0,0)`. |
+| **Cel Shading Limpo** | Sombreamento quantizado em blocos definidos (Base, Sombra e Destaque), eliminando gradientes indesejados. |
+| **19 Paletas Settei** | Opções prontas via `--palette`: `fantasia`, `scifi`, `shonen`, `idol`, `dark`, `manga_shonen`, `manga_shojo`, `manga_seinen`, `manga_monochrome`, `anime_modern`, `anime_retro_90s`, `cyberpunk_anime`, `fantasy_isekai`, `slice_of_life` e mais. |
 
 ---
 
-## ⚙️ Guia Completo de Parâmetros
+## 👁️ Visão Neural e Crítico de Estúdio
+
+- **Visão Neural (`VisionEncoder`):** Extrai características de até 4 imagens de referência (fichas de personagens, mapas ou esboços) e injeta na U-Net via atenção cruzada.
+- **Crítico de Estúdio (`StudioStyleCritic`):** Mede a qualidade técnica da imagem gerada (cel shading, saturação, lineart, regra dos terços) e calcula uma pontuação de 0% a 100%.
+
+```bash
+# Geração com imagem de referência e relatório HTML
+python scripts/generate.py \
+  --prompt "heroína anime no festival de verão" \
+  --reference referencia_personagem.png \
+  --preset xxlarge \
+  --view --html relatorio.html
+```
+
+---
+
+## ⚙️ Guia Completo de Parâmetros e CLI
 
 ### 1. Configuração da Arquitetura (`ModelConfig`)
 
-Hiperparâmetros configuráveis da U-Net, encoders e difusão:
-
 | Parâmetro | `xxlarge` (Estúdio) | `xlarge` (Ultra) | `large` (Padrão) | `lite` (CPU) | Descrição |
 | --- | ---: | ---: | ---: | ---: | --- |
-| `image_resolution` | `(1024, 1024)` | `(512, 512)` | `(256, 256)` | `(32, 32)` | Resolução espacial de treino e geração |
-| `image_channels` | `3` | `3` | `3` | `3` | Número de canais de cor (RGB) |
+| `image_resolution` | `(1024, 1024)` | `(512, 512)` | `(256, 256)` | `(32, 32)` | Resolução espacial de treino e amostragem |
 | `base_channels` | `320` | `192` | `128` | `16` | Canais base do 1º estágio da U-Net |
-| `latent_channels` | `16` | `16` | `16` | `16` | Canais latentes internos do modelo |
-| `unet_res_blocks` | `4` | `3` | `3` | `2` | Blocos residuais por nível na U-Net |
-| `downsample_factor` | `2` | `2` | `2` | `2` | Fator de redução de resolução espacial |
-| `num_timesteps` | `1000` | `1000` | `1000` | `100` | Passos de adição de ruído no processo de difusão |
-| `generation_steps` | `50` | `50` | `50` | `4` | Passos de amostragem durante a geração DDIM |
-| `time_embedding_dim` | `1536` | `1024` | `768` | `64` | Dimensão do vetor de condicionamento |
-| `guidance_scale` | `9.0` | `8.5` | `7.5` | `3.0` | Força do Classifier-Free Guidance (CFG) |
-| `condition_dropout` | `0.1` | `0.1` | `0.1` | `0.1` | Taxa de dropout do texto no treino |
-| `text_vocab_size` | `256` | `256` | `256` | `256` | Tamanho do vocabulário byte-level |
-| `max_prompt_length` | `512` | `512` | `512` | `128` | Comprimento máximo do prompt em bytes |
-| `text_encoder_layers` | `20` | `16` | `12` | `2` | Camadas Transformer do encoder de texto |
+| `unet_res_blocks` | `4` | `3` | `3` | `2` | Blocos residuais por nível da U-Net |
+| `num_timesteps` | `1000` | `1000` | `1000` | `100` | Passos do processo de difusão |
+| `generation_steps` | `50` | `50` | `50` | `4` | Passos de amostragem DDIM |
+| `time_embedding_dim` | `1536` | `1024` | `768` | `64` | Dimensão do vetor de tempo e contexto |
+| `guidance_scale` | `9.0` | `8.5` | `7.5` | `3.0` | Multiplicador de Classifier-Free Guidance (CFG) |
+| `text_encoder_layers` | `20` | `16` | `12` | `2` | Camadas Transformer do encoder de prompt |
 | `attention_heads` | `16` | `16` | `16` | `4` | Cabeças de atenção na U-Net e encoders |
-| `vision_enabled` | `True` | `True` | `True` | `True` | Ativa o Vision Transformer (ViT) |
-| `vision_patch_size` | `16` | `16` | `16` | `8` | Tamanho dos patches (px) do ViT |
-| `vision_layers` | `20` | `12` | `8` | `2` | Camadas do Vision Transformer |
-| `vision_input_resolution` | `384` | `256` | `224` | `32` | Resolução do ViT para imagens de referência |
-| `max_reference_images` | `4` | `4` | `4` | `4` | Máximo de imagens de referência injetadas |
-| `reference_dropout` | `0.5` | `0.5` | `0.5` | `0.5` | Dropout de imagens de referência no treino |
-| `generation_profile` | `"xxlarge"` | `"xlarge"` | `"large"` | `"lite"` | Nome do perfil de geração utilizado |
+| `vision_layers` | `20` | `12` | `8` | `2` | Camadas do Vision Transformer (ViT) |
+| `vision_input_resolution` | `384` | `256` | `224` | `32` | Resolução do ViT para referências visuais |
 
 ---
 
 ### 2. CLI de Geração (`scripts/generate.py`)
 
-Gera imagens, aplica acabamento de estúdio, executa auto-revisão e visualização:
-
-| Opção | Valor Padrão | Descrição |
+| Argumento | Padrão | Descrição |
 | --- | --- | --- |
-| `--prompt` | `"guerreira anime em uma cidade ao entardecer"` | Descrição textual da cena desejada |
-| `--negative-prompt` | `None` | Elementos adicionais a evitar (combinados ao negativo de estúdio) |
-| `--palette` | `None` | Escolha de paleta settei (19 opções disponíveis) |
-| `--checkpoint` | `None` | Caminho para o arquivo `.pt` de checkpoint treinado |
-| `--preset` | `"large"` | Perfil do modelo sem checkpoint: `large` (256x256), `xlarge` (512x512), `xxlarge` (1024x1024), `lite` (32x32) |
-| `--dynamic-thresholding` | `False` | Aplica thresholding dinâmico para evitar saturação em alto CFG |
-| `--manga` | `False` | Ativa o modo de acabamento mangá monocromático com retículas (screentone) |
-| `--output` | `generated.png` | Caminho do arquivo PNG de saída (salva também `.report.json`) |
-| `--resolution` | `None` | Sobrescreve a resolução de geração (largura/altura em pixels) |
-| `--steps` | `None` (50) | Sobrescreve a quantidade de passos de amostragem DDIM |
-| `--guidance-scale` | `None` (7.5–9.0) | Sobrescreve o multiplicador de CFG |
-| `--reference` | `[]` | Caminho de imagem de referência (pode ser usado até 4 vezes) |
+| `--prompt` | `"guerreira anime em uma cidade ao entardecer"` | Descrição em texto da ilustração ou cena de mangá |
+| `--negative-prompt` | `None` | Elementos adicionais a evitar |
+| `--palette` | `None` | Escolha da ficha de cores settei (19 opções disponíveis) |
+| `--checkpoint` | `None` | Caminho do arquivo `.pt` de modelo treinado |
+| `--preset` | `"large"` | Perfil da arquitetura: `large`, `xlarge`, `xxlarge` ou `lite` |
+| `--manga` | `False` | Ativa o modo mangá monocromático com retículas (screentone) |
+| `--output` | `generated.png` | Caminho do arquivo PNG de saída |
+| `--steps` | `50` | Quantidade de passos de amostragem DDIM |
+| `--guidance-scale` | `7.5`–`9.0` | Força de alinhamento com o prompt (CFG) |
+| `--reference` | `[]` | Imagens de referência para o VisionEncoder (até 4) |
 | `--init-image` | `None` | Imagem inicial para processo img2img de correção |
-| `--strength` | `0.6` | Força de modificação na imagem inicial (0.0 a 1.0) |
-| `--refine-rounds` | `1` | Número máximo de rodadas de autocorreção caso a nota fique abaixo da meta |
-| `--target-score` | `0.75` | Nota do crítico (0.0 a 1.0) para considerar a imagem dentro dos padrões |
-| `--seed` | `42` | Semente aleatória para reprodutibilidade |
-| `--device` | `cuda` (se disponível) | Dispositivo de processamento (`cuda`, `mps`, `cpu`) |
-| `--view`, `--show` | `False` | Renderiza a imagem diretamente no terminal usando ANSI TrueColor |
-| `--cols` | `60` | Largura em colunas de texto para a exibição no terminal |
-| `--html` | `None` | Salva um relatório e galeria visual interativa em HTML no caminho informado |
-| `--no-studio-rules` | `False` | Desativa a injeção de regras de estúdio automáticas no prompt |
-| `--no-finish` | `False` | Desativa o pós-processamento de acabamento técnico de estúdio |
+| `--strength` | `0.6` | Força de alteração na imagem inicial em img2img |
+| `--refine-rounds` | `1` | Rodadas de autocorreção caso a pontuação do crítico fique abaixo do alvo |
+| `--target-score` | `0.75` | Pontuação mínima desejada do crítico (0.0 a 1.0) |
+| `--view`, `--show` | `False` | Exibe a imagem gerada diretamente no terminal via ANSI TrueColor |
+| `--cols` | `60` | Largura em colunas da exibição no terminal |
+| `--html` | `None` | Exporta relatório visual interativo em galeria HTML |
 
 ---
 
 ### 3. CLI de Treinamento (`scripts/train.py`)
 
-Treina o denoiser a partir do dataset local de imagens e anotações:
-
-| Opção | Valor Padrão | Descrição |
+| Argumento | Padrão | Descrição |
 | --- | --- | --- |
-| `--images` | **Obrigatório** | Diretório contendo as imagens locais de treino |
-| `--annotations` | **Obrigatório** | Diretório contendo as anotações JSON ou TXT correspondentes |
-| `--preset` | `"large"` | Perfil da arquitetura a treinar: `large`, `xlarge`, `xxlarge` ou `lite` |
-| `--gradient-accumulation-steps` | `1` | Passos de acúmulo de gradiente para economizar VRAM em modelos grandes |
-| `--mixed-precision` | `False` | Ativa precisão mista automática (AMP FP16/BF16) para acelerar o treino |
-| `--no-ema` | `False` | Desativa o rastreamento EMA dos pesos do modelo |
-| `--resolution` | `None` | Sobrescreve a resolução de treino (ex: `256`, `512` ou `1024`) |
-| `--learning-rate` | `1e-4` | Taxa de aprendizado do otimizador AdamW |
-| `--device` | `"auto"` | Seleção de dispositivo (`auto` detecta CUDA -> MPS -> CPU) |
-| `--epochs` | `2` | Quantidade total de épocas de treinamento |
-| `--batch-size` | `2` | Tamanho do lote de dados por passo |
-| `--checkpoint-dir` | `checkpoints` | Diretório onde os checkpoints `.pt` serão salvos |
+| `--images` | **Obrigatório** | Diretório das imagens de treino |
+| `--annotations` | **Obrigatório** | Diretório das anotações JSON/TXT |
+| `--preset` | `"large"` | Perfil do modelo: `large`, `xlarge`, `xxlarge` ou `lite` |
+| `--gradient-accumulation-steps` | `1` | Passos de acúmulo de gradiente para economizar VRAM |
+| `--mixed-precision` | `False` | Ativa precisão mista automática (AMP FP16/BF16) |
+| `--learning-rate` | `1e-4` | Taxa de aprendizado para o otimizador AdamW |
+| `--epochs` | `2` | Número total de épocas |
+| `--batch-size` | `2` | Tamanho do lote por passo |
+| `--checkpoint-dir` | `checkpoints` | Diretório de salvamento dos modelos `.pt` |
 
 ---
 
 ### 4. CLIs de Inspeção e Visualização
 
-#### `scripts/inspect_image.py` — Análise Detalhada de Imagem
-- **`image`** *(Obrigatório)*: Caminho para a imagem a ser analisada.
-- **`--reference`**: Imagem de referência para comparar consistência de cores e estilo.
-- **`--fix`**: Caminho para salvar uma versão da imagem com acabamento de estúdio aplicado.
-- **`--view` / `--show`**: Exibe a imagem no terminal via ANSI TrueColor.
-- **`--cols`** *(Padrão: 60)*: Resolução em colunas para a exibição no terminal.
-- **`--html`**: Salva o relatório de inspeção em formato HTML interativo.
-- **`--json`**: Imprime o diagnóstico técnico no formato JSON.
-
-#### `scripts/view_image.py` — Visualizador de Imagens
-- **`image`** *(Obrigatório)*: Imagem a ser exibida.
-- **`--cols`** *(Padrão: 60)*: Largura da exibição no terminal.
-- **`--reference`**: Imagem de referência para cálculo de consistência.
-- **`--html`**: Salva o relatório em formato galeria HTML.
-- **`--no-critique`**: Oculta as métricas do crítico e exibe somente a imagem.
+- **`scripts/inspect_image.py`**: Analisa uma imagem existente, mede métricas de estúdio e gera diagnóstico com sugestões de correção.
+- **`scripts/view_image.py`**: Visualizador rápido de imagens no terminal em ANSI TrueColor com exportação opcional de relatórios HTML.
 
 ---
 
 ## 🏗️ Arquitetura e Fluxo do Sistema
 
 ```text
- Prompt do Usuário ──┐
-                     ├─► build_prompt() ──► Regras de Estúdio + Paleta Settei
- Negativo do Usuário ┘
-
-                            ┌─────────────────────────────────────────┐
-                            │           PromptEncoder (12-20 layers)  │ ──► Tokens de Texto
-                            └─────────────────────────────────────────┘          │
-                                                                                 ▼
- Referências Visuais ──────► ┌─────────────────────────────────────────┐     Atenção Cruzada
- (Até 4 imagens)            │           VisionEncoder (ViT 8-20 L)    │ ──► Tokens Visuais
-                            └─────────────────────────────────────────┘          │
-                                                                                 ▼
- Ruído Inicial (BCHW) ──────► ┌─────────────────────────────────────────┐    U-Net Denoiser
- Imagem Init (img2img) ────►  │  DownBlocks ─► Middle ─► UpBlocks    │ ◄── (183.5M a 1.43B)
-                              └─────────────────────────────────────────┘
-                                                 │
-                                                 ▼
-                                        Amostragem DDIM (50 Passos)
-                                                 │
-                                                 ▼
-                                       apply_studio_finish()
-                               (Lineart Marrom · Cel Shading · Saturação)
-                                                 │
-                                                 ▼
-                                       StudioStyleCritic.analyze()
-                                                 │
-                                ┌────────────────┴────────────────┐
-                         Nota >= Meta?                     Nota < Meta?
-                                │                                 │
-                                ▼                                 ▼
-                         Geração Final               Refinamento Autocorreção
-                        (PNG + HTML + ANSI)         (Nova rodada com prompt ajustado)
+ Prompt do Usuário ──► build_prompt() ──► Regras de Estúdio + Paleta Settei
+                                                    │
+                                                    ▼
+ Referências Visuais ──► VisionEncoder (ViT) ──► Atenção Cruzada
+                                                    │
+ Ruído / Init Img   ──► U-Net Denoiser ────────► Amostragem DDIM
+                                                    │
+                                                    ▼
+                                          apply_studio_finish()
+                                  (Lineart Marrom · Cel Shading · Retículas)
+                                                    │
+                                                    ▼
+                                        StudioStyleCritic.analyze()
+                                                    │
+                                    ┌───────────────┴───────────────┐
+                              Nota >= Alvo                    Nota < Alvo
+                                    │                               │
+                                    ▼                               ▼
+                             Arte Final PNG               Refinamento img2img
+                            + Visão Terminal             (Rodada de Autocorreção)
 ```
-
----
-
-## ⚠️ Limitações
-
-1. **Treinamento do Zero**: O modelo não utiliza pesos pré-treinados externos. A qualidade e o fidedignismo anatômico dependem diretamente do tamanho e qualidade do seu conjunto de dados local.
-2. **Análise do Crítico**: O `StudioStyleCritic` realiza análise estatística de pixels (distribuição de cores, bordas, ruído e regra dos terços); ele não realiza reconhecimento anatômico complexo (ex: contagem precisa de dedos). Anatomia correta é reforçada através dos prompts negativos de estúdio.
 
 ---
 
 ## 🧪 Testes e Verificação
 
-A suíte de testes unitários cobre validação de dados, amostragem por difusão, encoders visuais, regras de acabamento e salvamento de checkpoints:
+A suíte de testes unitários garante o correto funcionamento de todos os componentes da U-Net, encoders de texto e visão, regras de estúdio e agendadores de ruído:
 
 ```bash
 python3 -m unittest discover -s tests
@@ -369,4 +284,4 @@ python3 -m unittest discover -s tests
 
 ## 📜 Licença
 
-Distribuído sob a licença **MIT**. Veja [LICENSE](LICENSE) para mais detalhes.
+Distribuído sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
