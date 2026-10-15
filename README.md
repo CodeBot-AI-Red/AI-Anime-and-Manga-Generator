@@ -1,22 +1,22 @@
 # ✨ AI Anime & Manga Generator
 
-> Gerador local de imagens de anime e mangá por difusão, **treinado do zero** e **estritamente dedicado ao estilo anime/mangá**. Suporta perfis de **grande porte (182M)**, **ultra grande porte (440M)** e **estúdio supremo (1.2B+)**, com **Flash Attention (`scaled_dot_product_attention`)**, **rastreamento EMA**, **precisão mista AMP**, **visualizador de imagens ANSI TrueColor no terminal**, **visão neural ViT**, **relatórios interativos em HTML** e **regras de estúdio de animação** integradas.
+> Gerador local de imagens de anime e mangá por difusão, **treinado do zero** e **estritamente dedicado ao estilo anime/mangá**. Suporta perfis de **grande porte (183.5M)**, **ultra grande porte (442.1M)** e **estúdio supremo (1.43B+)**, com **Flash Attention (`scaled_dot_product_attention`)**, **rastreamento EMA**, **precisão mista AMP**, **visualizador de imagens ANSI TrueColor no terminal**, **visão neural ViT**, **relatórios interativos em HTML** e **regras de estúdio de animação** integradas.
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.2%2B-EE4C2C?logo=pytorch&logoColor=white)
-![Params](https://img.shields.io/badge/par%C3%A2metros-656K%20%7C%20182M%20%7C%20440M%20%7C%201.2B%2B-ff69b4)
+![Params](https://img.shields.io/badge/par%C3%A2metros-669K%20%7C%20183.5M%20%7C%20442.1M%20%7C%201.43B%2B-ff69b4)
 ![Domain](https://img.shields.io/badge/dom%C3%ADnio-Anime%20%26%20Mang%C3%A1-violet)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
 
 ---
 
-Não utiliza pesos pré-treinados externos, APIs de terceiros ou coleta de dados. Você fornece suas imagens e anotações **com direitos de uso**, treina 100% localmente e gera suas ilustrações e páginas de mangá de forma privada.
+Não utiliza pesos pré-treinados externos, APIs de terceiros ou coleta de dados. Você fornece suas imagens e anotações **com direitos de uso**, treina 100% localmente e gera suas ilustrações e páginas de mangá de forma privada com fidedignidade técnica aos estilos japoneses de animação e quadrinhos.
 
 > [!IMPORTANT]
-> - **Perfil Padrão:** O perfil padrão é **`large` (182,4 milhões de parâmetros, 256×256)**, recomendado para GPU.
-> - **Perfil Ultra:** O perfil **`xlarge` (439,9 milhões de parâmetros, 512×512)** é voltado para alta resolução e exige GPU com mais VRAM.
-> - **Perfil Supremo:** O perfil **`xxlarge` (1,2+ bilhão de parâmetros, 1024×1024)** é o estado da arte para gerações de estúdio em alta fidelidade.
-> - **Perfil Leve:** Para CPU, testes rápidos e desenvolvimento, utilize o perfil **`lite` (656 mil parâmetros, 32×32)**.
+> - **Perfil Supremo (`xxlarge`):** **1.430.660.035 (~1,43 bilhão de parâmetros, 1024×1024)** — o estado da arte para gerações de estúdio em altíssima fidelidade e resolução profissional.
+> - **Perfil Ultra (`xlarge`):** **442.149.955 (~442,1 milhões de parâmetros, 512×512)** — voltado para alta resolução e nível estendido de detalhamento com GPU com mais VRAM.
+> - **Perfil Padrão (`large`):** **183.499.395 (~183,5 milhões de parâmetros, 256×256)** — perfil recomendado para uso diário em GPU.
+> - **Perfil Leve (`lite`):** **669.043 (~669 mil parâmetros, 32×32)** — ideal para testes rápidos em CPU, depuração e desenvolvimento local.
 > - *Sem um checkpoint treinado localmente, os pesos permanecem aleatórios e a amostragem gera ruído.*
 
 ---
@@ -44,38 +44,38 @@ Não utiliza pesos pré-treinados externos, APIs de terceiros ou coleta de dados
 
 | Recurso | Descrição |
 | --- | --- |
-| **Domínio Estrito Anime & Mangá** | Sanitização e validação automática de prompts (`validate_manga_anime_domain`, `enforce_manga_anime_style`), garantindo fidelidade técnica às estética japonesa tradicional. |
-| **Perfis Escalonáveis (`lite`, `large`, `xlarge`, `xxlarge`)** | Suporte nativo desde o perfil **`lite` (32×32, 656K params)** para testes de CPU, até **`large` (256×256, 182M params)**, **`xlarge` (512×512, 440M params)** e **`xxlarge` (1024×1024, 1.2B+ params)**. |
+| **Domínio Estrito Anime & Mangá** | Sanitização e validação automática de prompts (`validate_manga_anime_domain`, `enforce_manga_anime_style`), garantindo fidelidade técnica à estética japonesa tradicional e bloqueando contaminação por estilos fotorrealistas ou 3D ocidentais. |
+| **Perfis Escalonáveis de Grande Porte (`lite`, `large`, `xlarge`, `xxlarge`)** | Suporte nativo desde o perfil **`lite` (32×32, 669K params)** para testes em CPU até **`large` (256×256, 183.5M params)**, **`xlarge` (512×512, 442.1M params)** e **`xxlarge` (1024×1024, 1.43B+ params)**. |
 | **Atenção Otimizada & Multi-Escala** | Utiliza `F.scaled_dot_product_attention` (Flash Attention) e atenção cruzada multinível nos blocos profundos da U-Net para alinhamento texto-imagem superior e economia de VRAM. |
-| **Rastreamento EMA & Precisão Mista (AMP)** | Suporte a Exponential Moving Average (EMA) para checkpoints de amostragem ultra suave e AMP (FP16/BF16) + acúmulo de gradientes para treinamento eficiente de modelos de grande porte. |
+| **Rastreamento EMA & Precisão Mista (AMP)** | Suporte a Exponential Moving Average (EMA) para checkpoints de amostragem ultra suave e AMP (FP16/BF16) + acúmulo de gradientes para treinamento eficiente de modelos de grande e supremo porte. |
 | **Visualizador de Imagens no Terminal** | Exibe as artes geradas ou inspecionadas diretamente no terminal usando caracteres de bloco e cores **ANSI TrueColor 24-bit** (`--view` / `--show`). |
 | **Relatórios Interativos em HTML** | Gera galerias e relatórios visuais ricos em HTML (`--html`), permitindo comparar a imagem gerada, imagem de referência e os diagnósticos do crítico. |
-| **Modo Mangá / Screentone** | Opção `--manga` com conversão monocromática de alta fidelidade e padrão de retículas estilizadas (*halftone screentones*). |
-| **Encoder de Texto Transformer** | Processa até **512 bytes** de prompt com **12 a 16 camadas Transformer**, suportando prompts ricos e regras de estúdio completas. |
-| **Visão Neural (`VisionEncoder`)** | Vision Transformer (**ViT de 8 a 12 camadas**, patches 16×16) que injeta até **4 imagens de referência** via atenção cruzada para manter consistência de personagem e estilo. |
+| **Modo Mangá & Retículas Screentone** | Suporte a mangá monocromático com retículas estilo *halftone* (`--manga`), com paletas `manga_shonen`, `manga_shojo`, `manga_seinen`, `manga_monochrome` e `sumi_e_ink`. |
+| **Encoder de Texto Transformer** | Processa até **512 bytes** de prompt com **12 a 20 camadas Transformer**, suportando prompts ricos e regras de estúdio completas. |
+| **Visão Neural (`VisionEncoder`)** | Vision Transformer (**ViT de 8 a 20 camadas**, patches 16×16) que injeta até **4 imagens de referência** via atenção cruzada para manter consistência de personagem e estilo. |
 | **Auto-revisão / Autocorreção** | O `StudioStyleCritic` analisa a imagem gerada e, se a pontuação estiver abaixo da meta (`--target-score`), aciona rodadas automáticas de refinamento img2img (`--refine-rounds`). |
 | **Aprimoramento / Corregedoria (`img2img`)** | Permite refazer ou corrigir artes existentes com `--init-image` e controle de força (`--strength`). |
-| **Regras dos Guias Settei** | Incorpora 7 pilares do visual de estúdio, 5 paletas *settei* com valores HEX reais, lineart em tom marrom quente RGB(61,43,40) e sombreamento *cel shading*. |
+| **Regras dos Guias Settei & 19 Paletas** | Incorpora os 7 pilares do visual de estúdio, 19 paletas *settei* pré-definidas com valores HEX reais, lineart em tom marrom quente RGB(61,43,40) e sombreamento *cel shading*. |
 
 ---
 
 ## 📊 Capacidade e Perfis do Modelo
 
-A arquitetura e a contagem exata de parâmetros de cada perfil do modelo são detalhadas abaixo:
+A arquitetura e a contagem **exata** de parâmetros treináveis de cada perfil do modelo são detalhadas abaixo:
 
-### Contagem de Parâmetros Treináveis por Componente
+### Contagem Exata de Parâmetros Treináveis por Componente
 
-| Componente da Arquitetura | `xlarge` (512×512) | `large` (Padrão, 256×256) | `lite` (CPU / Teste, 32×32) |
-| --- | ---: | ---: | ---: |
-| **Embedding temporal** (`time_embedding`) | 2.099.200 | 1.181.184 | 8.320 |
-| **Encoder de prompt** (`prompt_encoder`) | 202.328.064 | 85.645.824 | 124.672 |
-| **Encoder visual** (`vision_encoder`, ViT) | 152.212.480 | 57.450.240 | 113.856 |
-| **Fusão de condicionamento** (`condition`) | 3.147.776 | 1.771.008 | 12.416 |
-| **Reduções e projeções espacial** (In/Down/Up Proj) | 11.803.584 | 5.247.616 | 82.512 |
-| **Blocos residuais da U-Net** (ResBlocks) | 65.628.864 | 29.834.368 | 297.360 |
-| **Atenção cruzada** (`cross_attention`) | 2.757.120 | 1.313.792 | 16.768 |
-| **Camada de saída** (`output`) | 5.571 | 3.715 | 467 |
-| **Total de Parâmetros Treináveis** | **439.982.659 (~440M)** | **182.447.747 (~182M)** | **656.371 (~656K)** |
+| Componente da Arquitetura | `xxlarge` (Estúdio, 1024×1024) | `xlarge` (Ultra, 512×512) | `large` (Padrão, 256×256) | `lite` (CPU / Teste, 32×32) |
+| --- | ---: | ---: | ---: | ---: |
+| **Embedding temporal** (`time_embedding`) | 4.721.664 | 2.099.200 | 1.181.184 | 8.320 |
+| **Encoder de prompt** (`prompt_encoder`) | 567.813.120 | 202.328.064 | 85.645.824 | 124.672 |
+| **Encoder visual** (`vision_encoder`, ViT) | 568.708.608 | 152.212.480 | 57.450.240 | 113.856 |
+| **Fusão de condicionamento** (`condition`) | 7.080.960 | 3.147.776 | 1.771.008 | 12.416 |
+| **Projeções espaciais** (In/Down/Up Proj) | 32.779.840 | 11.803.584 | 5.247.616 | 82.512 |
+| **Blocos residuais da U-Net** (ResBlocks) | 236.751.680 | 65.628.864 | 29.834.368 | 297.360 |
+| **Atenção cruzada** (`cross_attention`) | 12.794.880 | 4.924.416 | 2.365.440 | 29.440 |
+| **Camada de saída** (`output`) | 9.283 | 5.571 | 3.715 | 467 |
+| **Total de Parâmetros Treináveis** | **1.430.660.035 (~1.43B)** | **442.149.955 (~442.1M)** | **183.499.395 (~183.5M)** | **669.043 (~669K)** |
 
 Para medir a contagem de parâmetros de qualquer configuração personalizada via Python:
 
@@ -83,7 +83,7 @@ Para medir a contagem de parâmetros de qualquer configuração personalizada vi
 from src.models.config import ModelConfig
 from src.models.diffusion import DiffusionDenoiser, count_trainable_parameters
 
-config = ModelConfig.large()  # ou ModelConfig.xlarge(), ModelConfig.lite()
+config = ModelConfig.xxlarge()  # ou ModelConfig.large(), ModelConfig.xlarge(), ModelConfig.lite()
 denoiser = DiffusionDenoiser(config)
 print(f"Parâmetros treináveis: {count_trainable_parameters(denoiser):,}")
 ```
@@ -120,17 +120,20 @@ data/
 ### 3. Treinar o Modelo
 
 ```bash
-# Treinamento com o perfil padrão (large, 256x256, GPU)
+# Treinamento com o perfil supremo (xxlarge, 1024x1024, 1.43B params, GPU)
 python scripts/train.py \
   --images data/raw \
   --annotations data/annotations \
+  --preset xxlarge \
   --epochs 100 \
-  --batch-size 8 \
+  --batch-size 4 \
+  --gradient-accumulation-steps 2 \
+  --mixed-precision \
   --learning-rate 1e-4 \
   --device auto
 
-# Para ultra resolução (xlarge, 512x512)
-python scripts/train.py --images data/raw --annotations data/annotations --preset xlarge
+# Treinamento com o perfil padrão (large, 256x256, GPU)
+python scripts/train.py --images data/raw --annotations data/annotations --preset large
 
 # Para testes rápidos em CPU
 python scripts/train.py --images data/raw --annotations data/annotations --preset lite
@@ -139,13 +142,20 @@ python scripts/train.py --images data/raw --annotations data/annotations --prese
 ### 4. Gerar Imagens
 
 ```bash
-# Geração padrão com checkpoint
+# Geração no perfil supremo (1024x1024) com checkpoint
 python scripts/generate.py \
   --checkpoint checkpoints/epoch-100.pt \
   --prompt "guerreira de cabelo vermelho em uma cidade ao entardecer" \
   --palette fantasia \
   --output saida/cena01.png \
   --view
+
+# Geração em estilo mangá monocromático com retículas (screentone)
+python scripts/generate.py \
+  --checkpoint checkpoints/epoch-100.pt \
+  --prompt "samurai em duelo sob chuva" \
+  --palette manga_shonen \
+  --manga --view
 ```
 
 ---
@@ -154,19 +164,15 @@ python scripts/generate.py \
 
 O modelo integra duas abordagens complementares de visão:
 
-1. **Visão Neural (`VisionEncoder`)**: Um Vision Transformer (ViT) treinado do zero extrai vetores de características de até 4 imagens de referência enviadas pelo usuário ou geradas anteriormente. Esses vetores são injetados na U-Net por atenção cruzada, garantindo consistência visual.
-2. **Crítico de Estúdio (`StudioStyleCritic`)**: Avalia a qualidade da imagem gerada medindo características de cel shading, ruído em superfícies chapadas, cor de lineart, contraste, saturação e composição (regra dos terços).
+1. **Visão Neural (`VisionEncoder`)**: Um Vision Transformer (ViT de 8 a 20 camadas) treinado do zero extrai vetores de características de até 4 imagens de referência enviadas pelo usuário ou geradas anteriormente. Esses vetores são injetados na U-Net por atenção cruzada, garantindo consistência visual de personagens e cenários.
+2. **Crítico de Estúdio (`StudioStyleCritic`)**: Avalia a qualidade da imagem gerada medindo características de cel shading, ruído em superfícies chapadas, cor de lineart marrom quente, contraste, saturação e composição (regra dos terços).
 
 ```bash
 # Visualizar a imagem no terminal e gerar relatório HTML
 python scripts/generate.py --checkpoint ck.pt \
   --prompt "heroína anime em cena de ação" \
+  --preset xxlarge \
   --view --cols 70 --html relatorio.html
-
-# Gerar em estilo mangá monocromático com retículas (screentone)
-python scripts/generate.py --checkpoint ck.pt \
-  --prompt "samurai em duelo sob chuva" \
-  --manga --view
 
 # Usar imagem de referência (ex: ficha de personagem / settei)
 python scripts/generate.py --checkpoint ck.pt \
@@ -184,7 +190,7 @@ python scripts/inspect_image.py minha_arte.png --reference ficha_aiko.png --view
 
 ---
 
-## 🎨 Regras de Estúdio Aplicadas
+## 🎨 Regras de Estúdio e 19 Paletas Settei
 
 Implementadas no módulo `src/studio/`, com base em folhas de modelo (*settei*) e diretrizes de colorização industrial de anime:
 
@@ -195,7 +201,7 @@ Implementadas no módulo `src/studio/`, com base em folhas de modelo (*settei*) 
 | **Cel Shading Limpo** | Sombreamento em blocos com bordas nítidas quantizadas em 3 níveis (Destaque/Normal/Sombra). |
 | **Pele Chapada de Anime** | Eliminação de texturas de poros ou granulados fotográficos em áreas de pele através de suavização direcionada. |
 | **Realce de Saturação** | Elevação automática de +20% a +25% na saturação de cores para um visual vibrante típico de estúdio. |
-| **Paletas Settei Pré-definidas** | Fichas de cores selecionáveis via `--palette` (`fantasia`, `scifi`, `shonen`, `idol`, `dark`, `manga_monochrome`). |
+| **19 Paletas Settei Selecionáveis** | Fichas de cores via `--palette`: `fantasia`, `scifi`, `shonen`, `idol`, `dark`, `manga_shonen`, `manga_shojo`, `manga_seinen`, `manga_monochrome`, `anime_modern`, `anime_retro_90s`, `cyberpunk_anime`, `fantasy_isekai`, `slice_of_life`, `chibi_cute`, `mecha_classic`, `gothic_loli`, `sumi_e_ink`, `kyoto_animation`. |
 
 ---
 
@@ -205,30 +211,30 @@ Implementadas no módulo `src/studio/`, com base em folhas de modelo (*settei*) 
 
 Hiperparâmetros configuráveis da U-Net, encoders e difusão:
 
-| Parâmetro | `xlarge` | `large` (Padrão) | `lite` | Descrição |
-| --- | ---: | ---: | ---: | --- |
-| `image_resolution` | `(512, 512)` | `(256, 256)` | `(32, 32)` | Resolução espacial de treino e geração (largura, altura) |
-| `image_channels` | `3` | `3` | `3` | Número de canais de cor (RGB) |
-| `base_channels` | `192` | `128` | `16` | Canais base do 1º estágio da U-Net (escala com profundidade) |
-| `latent_channels` | `16` | `16` | `16` | Canais latentes internos do modelo |
-| `unet_res_blocks` | `3` | `3` | `2` | Número de blocos residuais por nível na U-Net |
-| `downsample_factor` | `2` | `2` | `2` | Fator de redução de resolução espacial entre níveis |
-| `num_timesteps` | `1000` | `1000` | `100` | Passos de adpção de ruído no processo de difusão |
-| `generation_steps` | `50` | `50` | `4` | Passos de amostragem durante a geração DDIM |
-| `time_embedding_dim` | `1024` | `768` | `64` | Dimensão do vetor de condicionamento temporal/texto/visão |
-| `guidance_scale` | `8.5` | `7.5` | `3.0` | Força do Classifier-Free Guidance (CFG) |
-| `condition_dropout` | `0.1` | `0.1` | `0.1` | Probabilidade de descartar o texto no treino |
-| `text_vocab_size` | `256` | `256` | `256` | Tamanho do vocabulário byte-level |
-| `max_prompt_length` | `512` | `512` | `128` | Comprimento máximo do prompt em bytes |
-| `text_encoder_layers` | `16` | `12` | `2` | Camadas Transformer do encoder de texto |
-| `attention_heads` | `16` | `16` | `4` | Número de cabeças de atenção na U-Net e encoders |
-| `vision_enabled` | `True` | `True` | `True` | Ativa o encoder visual Vision Transformer (ViT) |
-| `vision_patch_size` | `16` | `16` | `8` | Tamanho dos patches (px) divididos pelo ViT |
-| `vision_layers` | `12` | `8` | `2` | Número de camadas do Transformer visual |
-| `vision_input_resolution` | `256` | `224` | `32` | Resolução de redimensionamento para imagens de referência |
-| `max_reference_images` | `4` | `4` | `4` | Máximo de imagens de referência injetadas por geração |
-| `reference_dropout` | `0.5` | `0.5` | `0.5` | Taxa de dropout de imagens de referência no treino |
-| `generation_profile` | `"xxlarge"` / `"xlarge"` | `"large"` | `"lite"` | Nome do perfil de geração utilizado |
+| Parâmetro | `xxlarge` (Estúdio) | `xlarge` (Ultra) | `large` (Padrão) | `lite` (CPU) | Descrição |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `image_resolution` | `(1024, 1024)` | `(512, 512)` | `(256, 256)` | `(32, 32)` | Resolução espacial de treino e geração |
+| `image_channels` | `3` | `3` | `3` | `3` | Número de canais de cor (RGB) |
+| `base_channels` | `320` | `192` | `128` | `16` | Canais base do 1º estágio da U-Net |
+| `latent_channels` | `16` | `16` | `16` | `16` | Canais latentes internos do modelo |
+| `unet_res_blocks` | `4` | `3` | `3` | `2` | Blocos residuais por nível na U-Net |
+| `downsample_factor` | `2` | `2` | `2` | `2` | Fator de redução de resolução espacial |
+| `num_timesteps` | `1000` | `1000` | `1000` | `100` | Passos de adição de ruído no processo de difusão |
+| `generation_steps` | `50` | `50` | `50` | `4` | Passos de amostragem durante a geração DDIM |
+| `time_embedding_dim` | `1536` | `1024` | `768` | `64` | Dimensão do vetor de condicionamento |
+| `guidance_scale` | `9.0` | `8.5` | `7.5` | `3.0` | Força do Classifier-Free Guidance (CFG) |
+| `condition_dropout` | `0.1` | `0.1` | `0.1` | `0.1` | Taxa de dropout do texto no treino |
+| `text_vocab_size` | `256` | `256` | `256` | `256` | Tamanho do vocabulário byte-level |
+| `max_prompt_length` | `512` | `512` | `512` | `128` | Comprimento máximo do prompt em bytes |
+| `text_encoder_layers` | `20` | `16` | `12` | `2` | Camadas Transformer do encoder de texto |
+| `attention_heads` | `16` | `16` | `16` | `4` | Cabeças de atenção na U-Net e encoders |
+| `vision_enabled` | `True` | `True` | `True` | `True` | Ativa o Vision Transformer (ViT) |
+| `vision_patch_size` | `16` | `16` | `16` | `8` | Tamanho dos patches (px) do ViT |
+| `vision_layers` | `20` | `12` | `8` | `2` | Camadas do Vision Transformer |
+| `vision_input_resolution` | `384` | `256` | `224` | `32` | Resolução do ViT para imagens de referência |
+| `max_reference_images` | `4` | `4` | `4` | `4` | Máximo de imagens de referência injetadas |
+| `reference_dropout` | `0.5` | `0.5` | `0.5` | `0.5` | Dropout de imagens de referência no treino |
+| `generation_profile` | `"xxlarge"` | `"xlarge"` | `"large"` | `"lite"` | Nome do perfil de geração utilizado |
 
 ---
 
@@ -240,15 +246,15 @@ Gera imagens, aplica acabamento de estúdio, executa auto-revisão e visualizaç
 | --- | --- | --- |
 | `--prompt` | `"guerreira anime em uma cidade ao entardecer"` | Descrição textual da cena desejada |
 | `--negative-prompt` | `None` | Elementos adicionais a evitar (combinados ao negativo de estúdio) |
-| `--palette` | `None` | Escolha de paleta settei: `fantasia`, `scifi`, `shonen`, `idol`, `dark`, `manga_monochrome` |
+| `--palette` | `None` | Escolha de paleta settei (19 opções disponíveis) |
 | `--checkpoint` | `None` | Caminho para o arquivo `.pt` de checkpoint treinado |
-| `--preset` | `"large"` | Perfil do modelo se sem checkpoint: `large` (256x256), `xlarge` (512x512), `xxlarge` (1024x1024), `lite` (32x32) |
-| `--dynamic-thresholding` | `False` | Aplica thresholding dinâmico para evitar saturação excessiva em altos valores de CFG |
+| `--preset` | `"large"` | Perfil do modelo sem checkpoint: `large` (256x256), `xlarge` (512x512), `xxlarge` (1024x1024), `lite` (32x32) |
+| `--dynamic-thresholding` | `False` | Aplica thresholding dinâmico para evitar saturação em alto CFG |
 | `--manga` | `False` | Ativa o modo de acabamento mangá monocromático com retículas (screentone) |
-| `--output` | `generated.png` | Caminho do arquivo PNG de saída (gera também `.report.json`) |
+| `--output` | `generated.png` | Caminho do arquivo PNG de saída (salva também `.report.json`) |
 | `--resolution` | `None` | Sobrescreve a resolução de geração (largura/altura em pixels) |
 | `--steps` | `None` (50) | Sobrescreve a quantidade de passos de amostragem DDIM |
-| `--guidance-scale` | `None` (7.5/8.5) | Sobrescreve o multiplicador de CFG |
+| `--guidance-scale` | `None` (7.5–9.0) | Sobrescreve o multiplicador de CFG |
 | `--reference` | `[]` | Caminho de imagem de referência (pode ser usado até 4 vezes) |
 | `--init-image` | `None` | Imagem inicial para processo img2img de correção |
 | `--strength` | `0.6` | Força de modificação na imagem inicial (0.0 a 1.0) |
@@ -276,7 +282,7 @@ Treina o denoiser a partir do dataset local de imagens e anotações:
 | `--gradient-accumulation-steps` | `1` | Passos de acúmulo de gradiente para economizar VRAM em modelos grandes |
 | `--mixed-precision` | `False` | Ativa precisão mista automática (AMP FP16/BF16) para acelerar o treino |
 | `--no-ema` | `False` | Desativa o rastreamento EMA dos pesos do modelo |
-| `--resolution` | `None` | Sobrescreve a resolução de treino (ex: `256` ou `512`) |
+| `--resolution` | `None` | Sobrescreve a resolução de treino (ex: `256`, `512` ou `1024`) |
 | `--learning-rate` | `1e-4` | Taxa de aprendizado do otimizador AdamW |
 | `--device` | `"auto"` | Seleção de dispositivo (`auto` detecta CUDA -> MPS -> CPU) |
 | `--epochs` | `2` | Quantidade total de épocas de treinamento |
@@ -313,15 +319,15 @@ Treina o denoiser a partir do dataset local de imagens e anotações:
  Negativo do Usuário ┘
 
                             ┌─────────────────────────────────────────┐
-                            │           PromptEncoder (12-16 layers)  │ ──► Tokens de Texto
+                            │           PromptEncoder (12-20 layers)  │ ──► Tokens de Texto
                             └─────────────────────────────────────────┘          │
                                                                                  ▼
  Referências Visuais ──────► ┌─────────────────────────────────────────┐     Atenção Cruzada
- (Até 4 imagens)            │           VisionEncoder (ViT 8-12 L)    │ ──► Tokens Visuais
+ (Até 4 imagens)            │           VisionEncoder (ViT 8-20 L)    │ ──► Tokens Visuais
                             └─────────────────────────────────────────┘          │
                                                                                  ▼
  Ruído Inicial (BCHW) ──────► ┌─────────────────────────────────────────┐    U-Net Denoiser
- Imagem Init (img2img) ────►  │  DownBlocks ─► Middle ─► UpBlocks    │ ◄── (182M a 440M)
+ Imagem Init (img2img) ────►  │  DownBlocks ─► Middle ─► UpBlocks    │ ◄── (183.5M a 1.43B)
                               └─────────────────────────────────────────┘
                                                  │
                                                  ▼
