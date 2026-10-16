@@ -2,7 +2,8 @@
 
 Executa as correções objetivas dos guias diretamente nos pixels:
 lineart preta → marrom RGB(61,43,40), sombras em cel shading com borda dura,
-brancos limpos (esclerótica/Hi), remoção de granulado e +20% de saturação.
+brancos limpos (esclerótica/Hi), remoção de granulado, +20% de saturação,
+além de retículas de mangá, speed lines e folhas de settei.
 """
 
 from __future__ import annotations
@@ -12,6 +13,8 @@ from dataclasses import dataclass
 import torch
 from torch.nn import functional as functional
 
+from src.anime import CelShadingPipeline, SetteiSheetGenerator
+from src.manga import MangaPanelLayout, ScreentoneConfig, apply_advanced_screentone, apply_speed_lines
 from .rules import LINEART_RGB
 
 
@@ -25,6 +28,12 @@ class FinishConfig:
     denoise: bool = True
     manga_mode: bool = False       # Converte em arte de mangá preto e branco com retícula
     screentone: bool = True        # Aplica padrão de retícula (halftone) em meio-tom
+    speed_lines: bool = False      # Linhas de velocidade de ação
+    speed_line_density: float = 0.5
+    panel_layout: bool = False     # Borda e calhas de painel de mangá
+    panel_rows: int = 2
+    panel_cols: int = 2
+    settei_sheet: bool = False     # Formata em folha de produção de estúdio (settei sheet)
 
 
 def _luminance(image: torch.Tensor) -> torch.Tensor:
@@ -36,54 +45,36 @@ def _median3(image: torch.Tensor) -> torch.Tensor:
     return patches.view(image.shape[0], 9, *image.shape[1:]).median(dim=1).values
 
 
-def _apply_manga_screentone(luma: torch.Tensor, use_screentone: bool = True) -> torch.Tensor:
-    height, width = luma.shape
-    if not use_screentone:
-        # Binarização/quantização direta de página de mangá
-        manga = torch.ones_like(luma)
-        manga[luma < 0.35] = 0.0
-        manga[(luma >= 0.35) & (luma < 0.70)] = 0.5
-        return manga.repeat(3, 1, 1)
-
-    ys, xs = torch.meshgrid(
-        torch.arange(height, device=luma.device),
-        torch.arange(width, device=luma.device),
-        indexing="ij",
-    )
-    # Matriz de retícula (dot pattern halftone de 4x4)
-    dot_pattern = (((xs % 4 - 1.5).pow(2) + (ys % 4 - 1.5).pow(2)) / 4.5).clamp(0, 1)
-
-    manga_mono = torch.ones_like(luma)
-    midtone_mask = (luma >= 0.25) & (luma < 0.75)
-    # Quanto mais escuro o tom original, maior o ponto de retícula
-    tone_threshold = (luma - 0.25) / 0.50
-    manga_mono[midtone_mask] = (dot_pattern[midtone_mask] < tone_threshold[midtone_mask]).float() * 0.6 + 0.2
-    manga_mono[luma < 0.25] = 0.0
-    manga_mono[luma >= 0.75] = 1.0
-
-    return manga_mono.repeat(3, 1, 1)
-
-
 def apply_studio_finish(image: torch.Tensor, config: FinishConfig | None = None) -> torch.Tensor:
     """``image``: (3, H, W) em [0, 1] → imagem corrigida no mesmo formato."""
     config = config or FinishConfig()
     image = image.float().clamp(0, 1)
 
+    if config.speed_lines:
+        image = apply_speed_lines(image, line_density=config.speed_line_density)
+
     if config.manga_mode:
         if config.denoise:
             image = _median3(image)
         luma = _luminance(image)
-        return _apply_manga_screentone(luma, config.screentone).clamp(0, 1)
+        if config.screentone:
+            sc_config = ScreentoneConfig(frequency=20.0, angle=45.0, dot_type="round")
+            image = apply_advanced_screentone(luma, sc_config)
+        else:
+            manga = torch.ones_like(luma)
+            manga[luma < 0.35] = 0.0
+            manga[(luma >= 0.35) & (luma < 0.70)] = 0.5
+            image = manga.repeat(3, 1, 1)
+
+        if config.panel_layout:
+            image = MangaPanelLayout.draw_grid_gutters(image, rows=config.panel_rows, cols=config.panel_cols)
+        return image.clamp(0, 1)
 
     if config.denoise:
         image = _median3(image)
 
-    luma = _luminance(image)
     if config.cel_strength > 0:
-        levels = config.cel_levels
-        stepped = ((luma * levels).floor().clamp(max=levels - 1) + 0.5) / levels
-        target = luma + (stepped - luma) * config.cel_strength
-        image = (image * (target / luma.clamp_min(1e-4))[None]).clamp(0, 1)
+        image = CelShadingPipeline.apply_cel_shading(image, num_levels=config.cel_levels)
 
     gray = _luminance(image)[None]
     image = (gray + (image - gray) * (1 + config.saturation_boost)).clamp(0, 1)
@@ -94,7 +85,14 @@ def apply_studio_finish(image: torch.Tensor, config: FinishConfig | None = None)
 
     luma = _luminance(image)
     dark = luma < config.lineart_threshold
-    line = torch.tensor(LINEART_RGB, dtype=image.dtype)[:, None] / 255
+    line = torch.tensor(LINEART_RGB, dtype=image.dtype, device=image.device)[:, None] / 255
     weight = 1 - luma[dark] / config.lineart_threshold
     image[:, dark] = image[:, dark] * (1 - weight) + line * weight
+
+    if config.panel_layout:
+        image = MangaPanelLayout.draw_grid_gutters(image, rows=config.panel_rows, cols=config.panel_cols)
+
+    if config.settei_sheet:
+        image = SetteiSheetGenerator.create_settei_layout(image)
+
     return image.clamp(0, 1)

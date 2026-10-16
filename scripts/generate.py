@@ -39,6 +39,12 @@ def main() -> None:
     parser.add_argument("--preset", choices=["large", "xlarge", "xxlarge", "lite"], default="large")
     parser.add_argument("--dynamic-thresholding", action="store_true", help="Aplica thresholding dinâmico para evitar saturação excessiva em alto CFG.")
     parser.add_argument("--manga", action="store_true", help="Ativa modo mangá monocromático com retículas (screentone).")
+    parser.add_argument("--speed-lines", action="store_true", help="Aplica linhas de velocidade de ação estilo mangá.")
+    parser.add_argument("--speed-line-density", type=float, default=0.5, help="Densidade das linhas de velocidade (0.0 a 1.0).")
+    parser.add_argument("--panel-layout", action="store_true", help="Aplica bordas e calhas de painel de mangá.")
+    parser.add_argument("--panel-rows", type=int, default=2, help="Número de linhas no painel de mangá.")
+    parser.add_argument("--panel-cols", type=int, default=2, help="Número de colunas no painel de mangá.")
+    parser.add_argument("--settei-sheet", action="store_true", help="Formata a saída como ficha de personagem de produção de estúdio (settei sheet).")
     parser.add_argument("--output", type=Path, default=Path("generated.png"))
     parser.add_argument("--resolution", type=int, default=None)
     parser.add_argument("--steps", type=int, default=None)
@@ -87,7 +93,15 @@ def main() -> None:
                          dynamic_thresholding=args.dynamic_thresholding, generator=generator)[0]
     if not args.no_finish:
         from src.studio import FinishConfig
-        finish_cfg = FinishConfig(manga_mode=args.manga or args.palette == "manga_monochrome")
+        finish_cfg = FinishConfig(
+            manga_mode=args.manga or args.palette == "manga_monochrome",
+            speed_lines=args.speed_lines,
+            speed_line_density=args.speed_line_density,
+            panel_layout=args.panel_layout,
+            panel_rows=args.panel_rows,
+            panel_cols=args.panel_cols,
+            settei_sheet=args.settei_sheet,
+        )
         image = apply_studio_finish(image, finish_cfg)
     report = critic.analyze(image, reference_view)
 
